@@ -2,7 +2,7 @@
 
 import { useState, useRef, useCallback } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { AppNav } from "../../components/AppNav";
 
 type SizeResult = {
   store?: string;
@@ -86,24 +86,10 @@ export default function SizeFinderPage() {
       {/* אוברליי */}
       <div className="pointer-events-none fixed inset-0 z-0 bg-black/70" />
 
-      {/* רקע */}
-      <div className="relative z-10 flex w-full flex-col items-center text-[#F2EFE9]">
-        {/* ניווט עליון */}
-        <div className="flex w-full items-center justify-between px-6 py-4">
-          <Link
-            href="/"
-            className="text-xs uppercase tracking-widest text-white/50 transition-all hover:text-white/80"
-          >
-            ← Vesti
-          </Link>
-          <Link
-            href="/street"
-            className="text-xs uppercase tracking-widest text-white/50 transition-all hover:text-white/80"
-          >
-            Street Finder →
-          </Link>
-        </div>
+      <AppNav />
 
+      {/* רקע */}
+      <div className="relative z-10 flex w-full flex-col items-center pt-16 text-[#F2EFE9]">
         {/* בנר */}
         <div className="relative h-[200px] w-full overflow-hidden">
           <Image src="/hero-banner.jpg" alt="Size Finder" fill className="object-cover object-top opacity-60" />

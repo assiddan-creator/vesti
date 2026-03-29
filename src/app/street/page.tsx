@@ -2,6 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
+import { AppNav } from "../../components/AppNav";
 import { useCallback, useRef, useState, type CSSProperties } from "react";
 
 type FlowState = "upload" | "analyzing" | "results";
@@ -186,14 +187,8 @@ export default function StreetFinderPage() {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center pt-0 pb-10 sm:pb-14 md:pb-16 px-3.5 sm:px-4">
       <div className="fixed inset-0 bg-black/70 z-0" />
-      <div className="relative z-10 w-full flex flex-col items-center text-[#F2EFE9]">
-        <Link
-          href="/"
-          className="fixed left-3 top-3 z-[20] text-xs text-white/50 transition-colors hover:text-white/80 sm:left-4 sm:top-4"
-        >
-          ← Vesti
-        </Link>
-
+      <AppNav />
+      <div className="relative z-10 flex w-full flex-col items-center pt-16 text-[#F2EFE9]">
         <div className="relative w-full h-[180px] sm:h-[220px] overflow-hidden">
           <Image
             src="/hero-banner.jpg"

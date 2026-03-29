@@ -2,7 +2,7 @@
 
 import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
 import Image from "next/image";
-import Link from "next/link";
+import { AppNav } from "../components/AppNav";
 import { motion, AnimatePresence } from "framer-motion";
 import type { Audience, Category, PresetLook } from "../lib/preset-looks";
 
@@ -458,19 +458,8 @@ export default function Home() {
   return (
     <div className="relative min-h-screen flex flex-col items-center justify-center pt-0 pb-10 sm:pb-14 md:pb-16 px-3.5 sm:px-4">
       <div className="fixed inset-0 bg-black/70 z-0" />
-      <div className="relative z-10 w-full flex flex-col items-center text-[#F2EFE9]">
-        <Link
-          href="/size"
-          className="fixed top-4 left-1/2 z-50 -translate-x-1/2 rounded-full border border-white/20 bg-black/40 px-4 py-2 text-xs uppercase tracking-widest text-white/70 backdrop-blur-sm transition-all hover:border-[#FF2800]/50 hover:text-white"
-        >
-          Size Finder
-        </Link>
-        <a
-          href="/street"
-          className="fixed top-4 right-4 z-50 px-4 py-2 rounded-full border border-white/20 backdrop-blur-sm bg-black/40 text-white/70 hover:text-white hover:border-[#FF2800]/50 transition-all text-xs tracking-widest uppercase"
-        >
-          Spotted something you love? →
-        </a>
+      <AppNav />
+      <div className="relative z-10 flex w-full flex-col items-center pt-16 text-[#F2EFE9]">
       <div className="relative w-full h-[220px] sm:h-[260px] overflow-hidden">
         {/* Hero image */}
         <Image

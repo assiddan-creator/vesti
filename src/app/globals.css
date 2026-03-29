@@ -143,3 +143,39 @@
     @apply font-sans;
   }
 }
+
+html {
+  background-image: url("/Luxury_fashion_flat_202603252000.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+  background-color: #080808;
+}
+
+body {
+  background-color: #080808;
+  background-image: url("/Luxury_fashion_flat_202603252000.jpeg");
+  background-size: cover;
+  background-position: center;
+  background-attachment: fixed;
+  background-repeat: no-repeat;
+}
+
+::selection {
+  background-color: rgba(255, 40, 0, 0.3);
+  color: #ffffff;
+}
+
+/* Upload areas */
+.upload-zone {
+  background: rgba(0, 0, 0, 0.5) !important;
+  border-color: rgba(255, 255, 255, 0.15) !important;
+}
+
+/* Text input / textarea */
+textarea,
+input[type="text"] {
+  background: rgba(0, 0, 0, 0.5) !important;
+  color: rgba(242, 239, 233, 0.9) !important;
+}

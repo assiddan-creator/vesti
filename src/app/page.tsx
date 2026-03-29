@@ -1,6 +1,8 @@
 "use client";
 
-import { useEffect, useMemo, useRef, useState } from "react";
+import { useEffect, useMemo, useRef, useState, type CSSProperties } from "react";
+import Image from "next/image";
+import { motion, AnimatePresence } from "framer-motion";
 import type { Audience, Category, PresetLook } from "../lib/preset-looks";
 
 interface UploadCardProps {
@@ -26,32 +28,28 @@ function UploadCard({
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-3 rounded-2xl border border-white/[0.06] bg-[#111111] p-2.5 sm:p-3">
+    <div className="flex flex-1 flex-col gap-3 rounded-2xl border border-white/10 bg-black/40 p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-3">
       <div className="flex flex-col gap-1">
-        <span className="text-sm font-semibold text-[#f5f0eb]">{label}</span>
-        <span className="text-xs leading-relaxed text-[#666]">{helperText}</span>
+        <span className="text-base font-semibold text-white/90">{label}</span>
+        <span className="text-sm leading-relaxed text-white/60">{helperText}</span>
       </div>
 
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="group relative flex min-h-44 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-white/10 bg-[#141414] hover:bg-[#181818] focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a96e]/30 sm:min-h-52"
+        className="upload-zone group relative flex min-h-44 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800]/30 sm:min-h-52"
       >
         {preview ? (
-          <div className="absolute inset-0 flex items-center justify-center rounded-xl bg-[#0a0a0a] p-3">
+          <div className="absolute inset-0 flex items-center justify-center rounded-xl border border-white/10 bg-black/50 p-3">
             {/* eslint-disable-next-line @next/next/no-img-element */}
-            <img
-              src={preview}
-              alt={label}
-              className="h-full w-full object-contain"
-            />
+            <img src={preview} alt={label} className="h-full w-full object-contain" />
           </div>
         ) : (
           <>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-[#1a1a1a] ring-1 ring-white/10 group-hover:shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10 backdrop-blur-sm group-hover:shadow-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-[#666]"
+                className="h-5 w-5 text-[#6B6B6B]"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -64,7 +62,7 @@ function UploadCard({
                 />
               </svg>
             </div>
-            <span className="text-sm font-medium text-[#555] group-hover:text-[#aaa]">
+            <span className="text-sm font-medium text-[#555555] group-hover:text-[#AAAAAA]">
               Add image
             </span>
           </>
@@ -79,7 +77,7 @@ function UploadCard({
         onChange={handleChange}
       />
 
-      <p className="text-xs text-[#666]">Preview only. Full file uploads.</p>
+      <p className="text-sm text-white/60">Preview only. Full file uploads.</p>
 
       {preview && (
         <button
@@ -88,7 +86,7 @@ function UploadCard({
             onClear();
             if (inputRef.current) inputRef.current.value = "";
           }}
-          className="self-start rounded-md border border-white/10 bg-[#1a1a1a] px-2.5 py-1 text-xs font-semibold text-[#888] hover:border-white/20 hover:text-[#aaa]"
+          className="self-start rounded-md border border-white/10 bg-[#1c1c1c] px-2.5 py-1 text-xs font-semibold text-[#8A8A8A] hover:border-white/20 hover:text-[#AAAAAA]"
         >
           Remove
         </button>
@@ -108,9 +106,7 @@ type ApiSuccess = {
     format: string;
     background: string;
   };
-  image:
-    | { type: "data_url"; value: string }
-    | { type: "url"; value: string };
+  image: { type: "data_url"; value: string } | { type: "url"; value: string };
 };
 
 type ApiError = {
@@ -129,7 +125,7 @@ function createRequestId() {
   return `req_${Date.now()}_${Math.random().toString(16).slice(2)}`;
 }
 
-type ModelKey = "gpt" | "flux" | "seedream" | "nano";
+type ModelKey = "gpt" | "flux" | "seedream" | "nano" | "imagen" | "nano1";
 
 const MODEL_OPTIONS: Array<{
   key: ModelKey;
@@ -165,6 +161,20 @@ const MODEL_OPTIONS: Array<{
     buttonLabel: "Generate",
     endpoint: "/api/clothes-swap/nano-banana",
     downloadExt: "jpg",
+  },
+  {
+    key: "nano1",
+    label: "Nano Banana 1 (Google)",
+    buttonLabel: "Generate",
+    endpoint: "/api/clothes-swap/nano1",
+    downloadExt: "png",
+  },
+  {
+    key: "imagen",
+    label: "Nano Banana 2 (Google)",
+    buttonLabel: "Generate",
+    endpoint: "/api/clothes-swap/imagen",
+    downloadExt: "png",
   },
 ];
 
@@ -438,670 +448,567 @@ export default function Home() {
     }
   }
 
+  const primaryActionBgStyle: CSSProperties = {
+    backgroundImage: "url('/Luxury_fashion_flat_202603252000.jpeg')",
+    backgroundSize: "cover",
+    backgroundPosition: "center",
+  };
+
   return (
-    <div className="flex min-h-screen flex-col items-center justify-center bg-[#0a0a0a] px-3.5 py-10 sm:px-4 sm:py-14 md:py-16 text-[#f5f0eb]">
-      <main className="flex w-full max-w-4xl flex-col items-center gap-8 sm:gap-10 md:gap-12">
-        {/* Step Indicator */}
-        <div className="w-full flex items-center gap-0 mb-8">
-          <div className="flex flex-col items-center">
-            <div
-              className={
-                currentStep === 1
-                  ? "bg-[#c9a96e] text-[#0a0a0a] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                  : currentStep > 1
-                    ? "bg-[#c9a96e]/20 text-[#c9a96e] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                    : "bg-[#1a1a1a] text-[#555] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-              }
-            >
-              1
-            </div>
-            <div
-              className={
-                currentStep >= 1
-                  ? "mt-2 text-[10px] tracking-widest uppercase text-[#f5f0eb]"
-                  : "mt-2 text-[10px] tracking-widest uppercase text-[#444]"
-              }
-            >
-              Upload
-            </div>
-          </div>
-          <div
-            className={`flex-1 h-px ${currentStep > 1 ? "bg-[#c9a96e]/40" : "bg-white/[0.06]"}`}
-          />
-          <div className="flex flex-col items-center">
-            <div
-              className={
-                currentStep === 2
-                  ? "bg-[#c9a96e] text-[#0a0a0a] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                  : currentStep > 2
-                    ? "bg-[#c9a96e]/20 text-[#c9a96e] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                    : "bg-[#1a1a1a] text-[#555] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-              }
-            >
-              2
-            </div>
-            <div
-              className={
-                currentStep >= 2
-                  ? "mt-2 text-[10px] tracking-widest uppercase text-[#f5f0eb]"
-                  : "mt-2 text-[10px] tracking-widest uppercase text-[#444]"
-              }
-            >
-              Choose Look
-            </div>
-          </div>
-          <div
-            className={`flex-1 h-px ${currentStep > 2 ? "bg-[#c9a96e]/40" : "bg-white/[0.06]"}`}
-          />
-          <div className="flex flex-col items-center">
-            <div
-              className={
-                currentStep === 3
-                  ? "bg-[#c9a96e] text-[#0a0a0a] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-                  : "bg-[#1a1a1a] text-[#555] w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold"
-              }
-            >
-              3
-            </div>
-            <div
-              className={
-                currentStep >= 3
-                  ? "mt-2 text-[10px] tracking-widest uppercase text-[#f5f0eb]"
-                  : "mt-2 text-[10px] tracking-widest uppercase text-[#444]"
-              }
-            >
-              Generate
-            </div>
-          </div>
-        </div>
-
-        {/* Header */}
-        <div className="flex flex-col items-center gap-4 text-center sm:gap-5">
-          <h1 className="text-[#f5f0eb] font-light tracking-widest text-5xl">
-            Vesti
-          </h1>
-          <p className="text-[#555] italic text-base">Try before you buy.</p>
-        </div>
-
-        {/* Slider Container */}
-        <div className="w-full overflow-hidden">
-          <div
-            className="flex transition-transform duration-500 ease-in-out"
-            style={{ transform: `translateX(-${(currentStep - 1) * 100}%)` }}
-          >
-            {/* Step 1 Panel */}
-            <div className="w-full shrink-0">
-              <div className="w-full rounded-2xl border border-white/[0.06] bg-[#111111] p-4">
-        {/* Upload Cards */}
-        <section className="w-full">
-          <div className="flex w-full flex-col gap-3 sm:gap-4 sm:flex-row">
-            <UploadCard
-              label="Target Person"
-              helperText="Portrait to keep pose and framing"
-              preview={personPreview}
-              onFileChange={handlePersonFile}
-              onClear={() => setPersonFile(null)}
-            />
-            <UploadCard
-              label="Clothing Reference"
-              helperText="Garment, flat lay, or product shot"
-              preview={garmentPreview}
-            onFileChange={(file) => {
-              handleClothingFile(file);
-              setIsPresetGalleryOpen(false);
-            }}
-              onClear={() => {
-                setGarmentFile(null);
-                setSelectedLookId(null);
-                setIsPresetGalleryOpen(true);
-              }}
-            />
-          </div>
-        </section>
-
-        {/* Refine instruction (optional) - compact, top-of-flow */}
-        <div className="w-full rounded-2xl border border-white/[0.06] bg-[#111111] p-3.5 sm:p-4">
-          <label className="mb-2 block text-sm font-semibold text-[#f5f0eb]">
-            Refinement (optional)
-          </label>
-          <textarea
-            value={refinePrompt}
-            onChange={(e) => setRefinePrompt(e.target.value)}
-            placeholder="Keep pose, preserve face, match light"
-            rows={2}
-            className="w-full resize-none rounded-xl border border-white/[0.06] bg-[#0d0d0d] px-3.5 py-2.5 text-sm text-[#f5f0eb] outline-none focus:border-white/20 focus:ring-2 focus:ring-[#c9a96e]/30"
-          />
-        </div>
-
-        <button
-          type="button"
-          onClick={() => setCurrentStep(2)}
-          disabled={!personFile || !garmentFile}
-          className="mt-4 inline-flex w-full items-center justify-center gap-2 rounded-xl bg-[#c9a96e] px-6 py-3.5 text-sm font-bold text-[#0a0a0a] hover:brightness-110 disabled:opacity-30 disabled:cursor-not-allowed"
+    <div className="relative min-h-screen flex flex-col items-center justify-center pt-0 pb-10 sm:pb-14 md:pb-16 px-3.5 sm:px-4">
+      <div className="fixed inset-0 bg-black/70 z-0" />
+      <div className="relative z-10 w-full flex flex-col items-center text-[#F2EFE9]">
+        <a
+          href="/street"
+          className="fixed top-4 right-4 z-50 px-4 py-2 rounded-full border border-white/20 backdrop-blur-sm bg-black/40 text-white/70 hover:text-white hover:border-[#FF2800]/50 transition-all text-xs tracking-widest uppercase"
         >
-          Next — Choose Look
-          <svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 20 20" fill="currentColor" className="w-4 h-4">
-            <path
-              fillRule="evenodd"
-              d="M3 10a.75.75 0 01.75-.75h10.638L10.23 5.29a.75.75 0 111.04-1.08l5.5 5.25a.75.75 0 010 1.08l-5.5 5.25a.75.75 0 11-1.04-1.08l4.158-3.96H3.75A.75.75 0 013 10z"
-              clipRule="evenodd"
-            />
-          </svg>
-        </button>
+          Street Finder
+        </a>
+      <div className="relative w-full h-[220px] sm:h-[260px] overflow-hidden">
+        {/* Hero image */}
+        <Image
+          src="/hero-banner.jpg"
+          alt="Vesti — AI Virtual Try-On"
+          fill
+          className="object-cover"
+          style={{ objectPosition: "center 30%" }}
+          sizes="100vw"
+          priority
+        />
+        {/* Dark overlay for readability */}
+        <div className="absolute inset-0 bg-gradient-to-r from-[#080808]/80 via-[#080808]/30 to-[#080808]/80" />
+        {/* Content overlay */}
+        <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
+          <h1 className="text-[#F2EFE9] font-extralight tracking-[0.3em] text-5xl sm:text-6xl md:text-7xl relative inline-block">
+            Vesti
+            <span className="absolute -bottom-2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF2800]/70 to-transparent" />
+          </h1>
+          <p className="text-white/50 italic text-sm sm:text-base tracking-wider">Try before you buy.</p>
+        </div>
       </div>
-    </div>
-
-    {/* Step 2 Panel */}
-    <div className="w-full shrink-0">
-      <div className="w-full rounded-2xl border border-white/[0.06] bg-[#111111] p-4">
-
-          {/* Look picker (focused step, still same page) */}
-          <section
-            ref={lookPickerSectionRef}
-            className="w-full"
-          >
-          <div className="mb-3 flex flex-col gap-1 sm:mb-4">
-            <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-              <div className="min-w-0 text-left text-sm font-semibold text-[#f5f0eb] sm:text-left">
-                Choose a look{" "}
-                <span className="font-medium text-[#666]">
-                  · {audience === "women" ? "Women" : "Men"} / {category}
-                </span>
-              </div>
-              {selectedLookId && (
-                <button
-                  type="button"
-                  disabled={isSubmitting}
-                  onClick={() => {
-                    setSelectedLookId(null);
-                    setIsPresetGalleryOpen(true);
-                  }}
-                  className="text-xs font-semibold text-[#666] underline-offset-2 hover:text-[#aaa] hover:underline disabled:opacity-60"
-                >
-                  Clear
-                </button>
-              )}
-            </div>
-            <div className="text-xs leading-relaxed text-[#666]">
-              Presets fill the garment slot. Upload your own anytime.
-            </div>
-          </div>
-
-          {/* Audience */}
-          <div className="mb-3 sm:mb-4">
-            <label className="mb-2 block text-xs font-semibold tracking-wide text-[#666] uppercase">
-              For
-            </label>
-            <div className="inline-flex w-full rounded-full border border-white/[0.06] bg-[#111] p-1 sm:w-auto">
-              <button
-                type="button"
-                onClick={() => {
-                  setAudience("women");
-                  setCategory("Recommended");
-                  setSelectedLookId(null);
-                  setIsPresetGalleryOpen(true);
-                }}
-                disabled={isSubmitting}
-                className={
-                  audience === "women"
-                    ? "min-h-11 flex-1 rounded-full bg-[#c9a96e] px-4 py-2.5 text-sm font-semibold text-[#0a0a0a] sm:flex-none sm:py-2"
-                    : "min-h-11 flex-1 rounded-full px-4 py-2.5 text-sm font-semibold text-[#666] hover:text-[#aaa] disabled:opacity-60 sm:flex-none sm:py-2"
-                }
-              >
-                Women
-              </button>
-              <button
-                type="button"
-                onClick={() => {
-                  setAudience("men");
-                  setCategory("Recommended");
-                  setSelectedLookId(null);
-                  setIsPresetGalleryOpen(true);
-                }}
-                disabled={isSubmitting}
-                className={
-                  audience === "men"
-                    ? "min-h-11 flex-1 rounded-full bg-[#c9a96e] px-4 py-2.5 text-sm font-semibold text-[#0a0a0a] sm:flex-none sm:py-2"
-                    : "min-h-11 flex-1 rounded-full px-4 py-2.5 text-sm font-semibold text-[#666] hover:text-[#aaa] disabled:opacity-60 sm:flex-none sm:py-2"
-                }
-              >
-                Men
-              </button>
-            </div>
-          </div>
-
-          {/* Category */}
-          <div className="mb-4 sm:mb-5">
-            <label className="mb-2 block text-xs font-semibold tracking-wide text-[#666] uppercase">
-              Category
-            </label>
-            <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
-              {categories.map((c) => (
-                <button
-                  key={c}
-                  type="button"
-                  disabled={isSubmitting}
-                  onClick={() => {
-                    setCategory(c);
-                    setSelectedLookId(null);
-                    setIsPresetGalleryOpen(true);
-                  }}
+      <main className="flex w-full max-w-4xl flex-col items-center gap-8 sm:gap-10 md:gap-12">
+        <div className="relative z-10 w-full flex justify-between items-center px-8 py-3 border-b border-white/10">
+          {[
+            { n: 1, label: "Your Photo" },
+            { n: 2, label: "Garment" },
+            { n: 3, label: "Generate" },
+          ].map(({ n, label }, i) => (
+            <div key={n} className="flex items-center flex-1 last:flex-none">
+              <div className="flex flex-col items-center gap-1.5">
+                <div
                   className={
-                    category === c
-                      ? "min-h-11 rounded-xl bg-[#c9a96e] px-2.5 py-2 text-xs font-semibold text-[#0a0a0a] sm:px-4 sm:py-2.5 sm:text-sm"
-                      : "min-h-11 rounded-xl bg-[#141414] px-2.5 py-2 text-xs font-semibold text-[#666] border border-white/[0.06] hover:border-white/15 disabled:opacity-60 sm:px-4 sm:py-2.5 sm:text-sm"
+                    currentStep === n
+                      ? "relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-[#080808] before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-50 after:absolute after:inset-0 after:bg-[#FF2800]/70 [&>*]:relative [&>*]:z-10"
+                      : currentStep > n
+                        ? "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-[#FF2800]/20 text-[#FF2800]"
+                        : "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-[#1c1c1c] text-[#484848]"
                   }
                 >
-                  {c}
-                </button>
-              ))}
-            </div>
-          </div>
-
-          {/* Gallery */}
-          {!isPresetGalleryOpen ? (
-            <div className="flex flex-col gap-2.5 rounded-2xl border border-white/[0.06] bg-[#0d0d0d] px-3 py-3 text-xs text-[#666] ring-1 ring-white/10 sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-4">
-              <span className="min-w-0 font-semibold text-[#f5f0eb] sm:truncate">
-                {selectedLookId ? (selectedPresetLook?.title ?? "Selected look") : "No preset"}
-              </span>
-              <button
-                type="button"
-                disabled={isSubmitting}
-                onClick={() => setIsPresetGalleryOpen(true)}
-                className="min-h-10 w-full shrink-0 rounded-lg bg-[#1a1a1a] border border-white/[0.08] px-3 py-2 text-xs font-semibold text-[#888] hover:border-white/20 disabled:opacity-60 sm:w-auto sm:py-1.5"
-              >
-                Browse
-              </button>
-            </div>
-          ) : presetLooks.length === 0 ? (
-            <div className="rounded-2xl border border-dashed border-white/10 bg-[#141414] px-3 py-4 sm:px-4">
-              <p className="text-[11px] font-semibold tracking-[0.12em] text-[#444] uppercase">
-                Empty folder
-              </p>
-              <p className="mt-2 text-xs leading-relaxed text-[#666]">
-                Add files to
-                <span className="font-semibold text-[#f5f0eb]">
-                  {" "}
-                  public/looks/{audience}/{category.toLowerCase().replaceAll(" ", "")}/
+                  <span className="relative z-10">{currentStep > n ? "✓" : n}</span>
+                </div>
+                <span
+                  className={
+                    currentStep === n
+                      ? "text-[10px] tracking-widest uppercase text-[#F2EFE9]"
+                      : "text-[10px] tracking-widest uppercase text-[#484848]"
+                  }
+                >
+                  {label}
                 </span>
-                . They show up here.
-              </p>
-            </div>
-          ) : (
-            <div
-              key={`${audience}-${category}`}
-              className="animate-fade-in grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3"
-            >
-              {presetLooks.map((look) => {
-                const isSelected = selectedLookId === look.id;
-                return (
-                  <button
-                    key={look.id}
-                    type="button"
-                    disabled={isSubmitting}
-                    onClick={() => void selectPresetLook(look)}
-                    className={
-                      isSelected
-                        ? "group relative overflow-hidden rounded-2xl border border-[#c9a96e]/50 bg-[#111111] ring-1 ring-[#c9a96e]/20"
-                        : "group relative overflow-hidden rounded-2xl border border-white/[0.06] bg-[#111111] hover:border-white/20"
-                    }
-                  >
-                    <div className="relative aspect-[4/3] w-full overflow-hidden bg-[#141414]">
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={look.imageSrc}
-                        alt={look.title}
-                        onError={(e) => {
-                          e.currentTarget.src =
-                            "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='480' viewBox='0 0 640 480'%3E%3Crect width='640' height='480' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2371717a' font-family='Arial,sans-serif' font-size='18'%3EPreview unavailable%3C/text%3E%3C/svg%3E";
-                        }}
-                        className="h-full w-full object-cover"
-                      />
-                    </div>
-                    <div className="px-3 py-2">
-                      <div className="text-left text-xs font-medium leading-4 text-[#f5f0eb]">
-                        {look.title}
-                      </div>
-                    </div>
-                    {isSelected && (
-                      <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#0a0a0a]/95 px-2 py-1 text-[10px] font-semibold text-[#f5f0eb]">
-                        <svg
-                          xmlns="http://www.w3.org/2000/svg"
-                          viewBox="0 0 20 20"
-                          fill="currentColor"
-                          className="h-3 w-3"
-                        >
-                          <path
-                            fillRule="evenodd"
-                            d="M16.704 5.29a1 1 0 010 1.415l-7.5 7.5a1 1 0 01-1.415 0l-3.5-3.5a1 1 0 011.415-1.415l2.793 2.793 6.793-6.793a1 1 0 011.414 0z"
-                            clipRule="evenodd"
-                          />
-                        </svg>
-                        Selected
-                      </div>
-                    )}
-                  </button>
-                );
-              })}
-            </div>
-          )}
-        </section>
-
-        <div className="mt-4 flex gap-2">
-          <button
-            type="button"
-            onClick={() => setCurrentStep(1)}
-            className="bg-[#1a1a1a] border border-white/[0.08] text-[#888] rounded-xl px-5 py-3 text-sm font-semibold flex-1"
-          >
-            Back
-          </button>
-          <button
-            type="button"
-            onClick={() => setCurrentStep(3)}
-            disabled={!garmentFile}
-            className="inline-flex flex-1 items-center justify-center gap-2 rounded-xl bg-[#c9a96e] px-6 py-3.5 text-sm font-bold text-[#0a0a0a] hover:brightness-110 disabled:opacity-30 disabled:cursor-not-allowed"
-          >
-            Next — Review
-          </button>
-        </div>
-      </div>
-    </div>
-
-    {/* Step 3 Panel */}
-    <div className="w-full shrink-0">
-      <div className="w-full rounded-2xl border border-white/[0.06] bg-[#111111] p-4">
-        <button
-          type="button"
-          onClick={() => setCurrentStep(2)}
-          className="self-start mb-4 text-xs text-[#666] hover:text-[#aaa] underline-offset-2 hover:underline"
-        >
-          ← Back
-        </button>
-
-        {/* Action */}
-        <section className="w-full">
-          <form
-            className="flex w-full flex-col items-center gap-3"
-            aria-busy={isSubmitting}
-            onKeyDown={(e) => {
-              // Prevent accidental Enter-to-submit from non-textarea elements.
-              if (e.key === "Enter") {
-                const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase?.();
-                if (tag !== "textarea") e.preventDefault();
-              }
-            }}
-            onSubmit={(e) => {
-              e.preventDefault();
-              void handleGenerate();
-            }}
-          >
-          {/* Pre-generation review (lightweight clarity) */}
-          <div className="w-full">
-            <div className="mb-2 text-xs font-semibold tracking-wide text-[#444] uppercase">
-              Summary
-            </div>
-            <div
-              className={
-                personFile && garmentFile
-                  ? "rounded-2xl border border-white/[0.06] bg-[#0d0d0d] p-4"
-                  : "rounded-2xl border border-white/[0.06] bg-[#0d0d0d] p-4 ring-1 ring-white/10"
-              }
-            >
-              {!(personFile && garmentFile) && (
-                <div className="mb-3 rounded-xl border border-white/[0.06] bg-[#0d0d0d] px-3 py-2.5 text-xs leading-relaxed text-[#666]">
-                  <span className="font-semibold text-[#f5f0eb]">Required:</span>{" "}
-                  {!personFile && !garmentFile && (
-                    <span>Person photo and garment in Step 1.</span>
-                  )}
-                  {!personFile && garmentFile && <span>Person photo in Step 1.</span>}
-                  {personFile && !garmentFile && <span>Garment or preset.</span>}
-                </div>
+              </div>
+              {i < 2 && (
+                <div
+                  className={
+                    "h-px flex-1 mx-3 mb-5 " +
+                    (currentStep > n ? "bg-[#FF2800]/40" : "bg-white/[0.06]")
+                  }
+                />
               )}
-              <div className="flex flex-col gap-2 text-sm">
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs font-medium tracking-wide text-[#666] uppercase">Audience</span>
-                  <span className="font-semibold text-[#f5f0eb]">
-                    {audience === "women" ? "Women" : "Men"}
-                  </span>
-                </div>
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs font-medium tracking-wide text-[#666] uppercase">Category</span>
-                  <span className="font-semibold text-[#f5f0eb]">{category}</span>
-                </div>
-                <div className="mt-1 flex items-center justify-between gap-3 border-t border-white/[0.06] pt-3">
-                  <span className="text-xs font-medium tracking-wide text-[#666] uppercase">Target Person</span>
-                  <span
-                    className={
-                      personFile
-                        ? "rounded-full bg-[#c9a96e]/10 px-2.5 py-1 text-xs font-semibold text-[#c9a96e] ring-1 ring-[#c9a96e]/20"
-                        : "rounded-full bg-white/[0.04] px-2.5 py-1 text-xs font-semibold text-[#555] ring-1 ring-white/[0.06]"
-                    }
-                  >
-                    {personFile ? "Ready" : "Missing"}
-                  </span>
-                </div>
-                {personFile && (
-                  <div className="text-xs text-[#666]">{personFile.name}</div>
-                )}
-                <div className="flex items-center justify-between gap-3">
-                  <span className="text-xs font-medium tracking-wide text-[#666] uppercase">
-                    Clothing Reference
-                  </span>
-                  <span
-                    className={
-                      garmentFile
-                        ? "rounded-full bg-[#c9a96e]/10 px-2.5 py-1 text-xs font-semibold text-[#c9a96e] ring-1 ring-[#c9a96e]/20"
-                        : "rounded-full bg-white/[0.04] px-2.5 py-1 text-xs font-semibold text-[#555] ring-1 ring-white/[0.06]"
-                    }
-                  >
-                    {garmentFile ? "Ready" : "Missing"}
-                  </span>
-                </div>
-                {garmentFile && (
-                  <div className="text-xs text-[#666]">
-                    {selectedPresetLook?.title ?? garmentFile.name}
-                  </div>
-                )}
-              </div>
             </div>
-          </div>
+          ))}
+        </div>
 
-          {garmentPreview && (
-            <div className="w-full">
-              <div className="mb-2 text-xs font-semibold text-[#f5f0eb]/70">
-                Look
-              </div>
-              <div className="flex flex-col gap-3 rounded-2xl border border-white/[0.06] bg-[#0d0d0d] p-3 sm:flex-row sm:items-start sm:justify-between sm:gap-3 sm:p-3.5">
-                <div className="flex min-w-0 items-start gap-3">
-                  {/* eslint-disable-next-line @next/next/no-img-element */}
-                  <img
-                    src={garmentPreview}
-                    alt="Garment preview"
-                    className="h-16 w-16 rounded-lg border border-white/[0.06] bg-[#111111] object-contain"
+        <AnimatePresence mode="wait">
+          <motion.div
+            key={currentStep}
+            initial={{ opacity: 0, x: 40 }}
+            animate={{ opacity: 1, x: 0 }}
+            exit={{ opacity: 0, x: -40 }}
+            transition={{ duration: 0.25, ease: "easeInOut" }}
+            className="w-full"
+          >
+            {currentStep === 1 && (
+              <div className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-5">
+                <UploadCard
+                  label="Target Person"
+                  helperText="Portrait to keep pose and framing"
+                  preview={personPreview}
+                  onFileChange={handlePersonFile}
+                  onClear={() => setPersonFile(null)}
+                />
+
+                <div className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-4">
+                  <label className="mb-2 block text-base font-semibold text-white/90">
+                    Refinement (optional)
+                  </label>
+                  <textarea
+                    value={refinePrompt}
+                    onChange={(e) => setRefinePrompt(e.target.value)}
+                    placeholder="Keep pose, preserve face, match light"
+                    rows={2}
+                    className="w-full resize-none rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-sm text-[#F2EFE9] outline-none focus:border-white/20 focus:ring-2 focus:ring-[#FF2800]/30"
                   />
-                  <div className="min-w-0">
-                    <div className="truncate text-sm font-semibold text-[#f5f0eb]">
-                      {selectedPresetLook?.title ?? "Custom upload"}
-                    </div>
-                    <div className="mt-0.5 text-xs text-[#666]">
-                      Garment for this run
-                    </div>
-                  </div>
                 </div>
+
                 <button
                   type="button"
-                  disabled={isSubmitting}
-                  onClick={clearGarmentReference}
-                  className="min-h-10 w-full shrink-0 rounded-md border border-white/[0.08] bg-[#1a1a1a] px-2.5 py-2 text-xs font-semibold text-[#888] hover:border-white/20 hover:text-[#aaa] disabled:opacity-60 sm:w-auto sm:py-1"
+                  onClick={() => setCurrentStep(2)}
+                  disabled={!personFile}
+                  style={primaryActionBgStyle}
+                  className="relative mt-5 inline-flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 overflow-hidden rounded-xl px-5 py-3.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(255,40,0,0.4)] transition-shadow hover:shadow-[0_4px_28px_rgba(255,40,0,0.6)] disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-0 sm:px-6"
                 >
-                  Remove
+                  <span className="absolute inset-0 bg-black/40" aria-hidden />
+                  <span className="relative z-10">Next — Choose Garment →</span>
                 </button>
               </div>
-            </div>
-          )}
-          <div className="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:min-w-[26rem]">
-            <div className="flex w-full min-w-0 flex-col gap-2">
-              <label className="text-sm font-semibold text-[#f5f0eb]">Model</label>
-              <div className="relative w-full min-w-0">
-                <select
-                  value={selectedModel}
-                  onChange={(e) => setSelectedModel(e.target.value as ModelKey)}
-                  disabled={isSubmitting}
-                  className="min-h-11 w-full min-w-0 appearance-none rounded-xl border border-white/[0.08] bg-[#111] px-4 py-3 pr-10 text-sm font-medium text-[#f5f0eb] outline-none focus:ring-2 focus:ring-[#c9a96e]/30 disabled:cursor-not-allowed disabled:opacity-60"
-                >
-                  {MODEL_OPTIONS.map((m) => (
-                    <option key={m.key} value={m.key}>
-                      {m.label}
-                    </option>
-                  ))}
-                </select>
-                <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#666]">
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="h-5 w-5"
-                  >
-                    <path
-                      fillRule="evenodd"
-                      d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </div>
-              </div>
-            </div>
-
-            <button
-              type="submit"
-              disabled={!canSubmit}
-              className="inline-flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 rounded-xl bg-[#c9a96e] px-5 py-3.5 text-sm font-bold text-[#0a0a0a] hover:brightness-110 disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-0 sm:px-6"
-            >
-              {isSubmitting && (
-                <span className="h-4 w-4 animate-spin rounded-full border-2 border-[#0a0a0a]/30 border-t-[#0a0a0a]" />
-              )}
-              {isSubmitting ? "Generating…" : selected.buttonLabel}
-            </button>
-            {!isSubmitting && (!personFile || !garmentFile) && (
-              <p className="rounded-2xl border border-white/[0.06] bg-[#0d0d0d] px-3 py-2.5 text-center text-xs leading-relaxed text-[#666] ring-1 ring-white/10">
-                {!personFile && !garmentFile
-                  ? "Add both uploads in Step 1 to continue."
-                  : !personFile
-                    ? "Add a person photo in Step 1."
-                    : "Add a garment or choose a preset."}
-              </p>
             )}
-            {isSubmitting && (
-              <div className="w-full rounded-2xl border border-white/[0.06] bg-[#0d0d0d] px-3 py-2.5 text-center ring-1 ring-white/10">
-                <p className="text-xs font-medium text-[#f5f0eb]">Processing…</p>
-                <p className="mt-0.5 text-[11px] leading-relaxed text-[#666]">
-                  May take a moment.
-                </p>
+
+            {currentStep === 2 && (
+              <div className="w-full rounded-2xl border border-white/10 bg-black/40 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-5">
+                <UploadCard
+                  label="Clothing Reference"
+                  helperText="Garment, flat lay, or product shot"
+                  preview={garmentPreview}
+                  onFileChange={(file) => {
+                    handleClothingFile(file);
+                    setIsPresetGalleryOpen(false);
+                  }}
+                  onClear={() => {
+                    setGarmentFile(null);
+                    setSelectedLookId(null);
+                    setIsPresetGalleryOpen(true);
+                  }}
+                />
+
+                <section ref={lookPickerSectionRef} className="mt-4 w-full">
+                  <div className="mb-3 flex flex-col gap-1 sm:mb-4">
+                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
+                      <div className="min-w-0 text-left text-base font-semibold text-white/90 sm:text-left">
+                        Choose a look{" "}
+                        <span className="font-medium text-white/60">
+                          · {audience === "women" ? "Women" : "Men"} / {category}
+                        </span>
+                      </div>
+                      {selectedLookId && (
+                        <button
+                          type="button"
+                          disabled={isSubmitting}
+                          onClick={() => {
+                            setSelectedLookId(null);
+                            setIsPresetGalleryOpen(true);
+                          }}
+                          className="text-xs font-semibold text-[#6B6B6B] underline-offset-2 hover:text-[#AAAAAA] hover:underline disabled:opacity-60"
+                        >
+                          Clear
+                        </button>
+                      )}
+                    </div>
+                    <div className="text-sm leading-relaxed text-white/60">
+                      Presets fill the garment slot. Upload your own anytime.
+                    </div>
+                  </div>
+
+                  <div className="mb-3 sm:mb-4">
+                    <label className="mb-2 block text-base font-semibold tracking-wide text-white/90 uppercase">
+                      For
+                    </label>
+                    <div className="inline-flex w-full rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-sm sm:w-auto">
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAudience("women");
+                          setCategory("Recommended");
+                          setSelectedLookId(null);
+                          setIsPresetGalleryOpen(true);
+                        }}
+                        disabled={isSubmitting}
+                        className={
+                          audience === "women"
+                            ? "relative min-h-11 flex-1 overflow-hidden rounded-full px-4 py-2.5 text-sm font-semibold text-white before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-40 after:absolute after:inset-0 after:bg-[#FF2800]/75 sm:flex-none sm:py-2 [&>*]:relative [&>*]:z-10"
+                            : "min-h-11 flex-1 rounded-full bg-white/10 px-4 py-2.5 text-sm font-medium text-white/80 hover:text-white disabled:opacity-60 sm:flex-none sm:py-2"
+                        }
+                      >
+                        <span className="relative z-10">Women</span>
+                      </button>
+                      <button
+                        type="button"
+                        onClick={() => {
+                          setAudience("men");
+                          setCategory("Recommended");
+                          setSelectedLookId(null);
+                          setIsPresetGalleryOpen(true);
+                        }}
+                        disabled={isSubmitting}
+                        className={
+                          audience === "men"
+                            ? "relative min-h-11 flex-1 overflow-hidden rounded-full px-4 py-2.5 text-sm font-semibold text-white before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-40 after:absolute after:inset-0 after:bg-[#FF2800]/75 sm:flex-none sm:py-2 [&>*]:relative [&>*]:z-10"
+                            : "min-h-11 flex-1 rounded-full bg-white/10 px-4 py-2.5 text-sm font-medium text-white/80 hover:text-white disabled:opacity-60 sm:flex-none sm:py-2"
+                        }
+                      >
+                        <span className="relative z-10">Men</span>
+                      </button>
+                    </div>
+                  </div>
+
+                  <div className="mb-4 sm:mb-5">
+                    <label className="mb-2 block text-base font-semibold tracking-wide text-white/90 uppercase">
+                      Category
+                    </label>
+                    <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
+                      {categories.map((c) => (
+                        <button
+                          key={c}
+                          type="button"
+                          disabled={isSubmitting}
+                          onClick={() => {
+                            setCategory(c);
+                            setSelectedLookId(null);
+                            setIsPresetGalleryOpen(true);
+                          }}
+                          className={
+                            category === c
+                              ? "relative min-h-11 overflow-hidden rounded-xl px-2.5 py-2 text-xs font-semibold text-white before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-40 after:absolute after:inset-0 after:bg-[#FF2800]/75 sm:px-4 sm:py-2.5 sm:text-sm [&>*]:relative [&>*]:z-10"
+                              : "min-h-11 rounded-xl border border-white/[0.06] bg-white/10 px-2.5 py-2 text-sm font-medium text-white/80 hover:border-white/15 disabled:opacity-60 sm:px-4 sm:py-2.5"
+                          }
+                        >
+                          <span className="relative z-10">{c}</span>
+                        </button>
+                      ))}
+                    </div>
+                  </div>
+
+                  {!isPresetGalleryOpen ? (
+                    <div className="flex flex-col gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-[#6B6B6B] backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-4">
+                      <span className="min-w-0 font-semibold text-[#F2EFE9] sm:truncate">
+                        {selectedLookId ? (selectedPresetLook?.title ?? "Selected look") : "No preset"}
+                      </span>
+                      <button
+                        type="button"
+                        disabled={isSubmitting}
+                        onClick={() => setIsPresetGalleryOpen(true)}
+                        className="min-h-10 w-full shrink-0 rounded-lg bg-[#1c1c1c] border border-white/[0.08] px-3 py-2 text-xs font-semibold text-[#8A8A8A] hover:border-white/20 disabled:opacity-60 sm:w-auto sm:py-1.5"
+                      >
+                        Browse
+                      </button>
+                    </div>
+                  ) : presetLooks.length === 0 ? (
+                    <div className="rounded-2xl border border-dashed border-white/10 bg-black/50 px-3 py-4 backdrop-blur-sm sm:px-4">
+                      <p className="text-sm font-semibold tracking-[0.12em] text-[#484848] uppercase">
+                        Empty folder
+                      </p>
+                      <p className="mt-2 text-sm leading-relaxed text-[#6B6B6B]">
+                        Add files to
+                        <span className="font-semibold text-[#F2EFE9]">
+                          {" "}
+                          public/looks/{audience}/{category.toLowerCase().replaceAll(" ", "")}/
+                        </span>
+                        . They show up here.
+                      </p>
+                    </div>
+                  ) : (
+                    <motion.div
+                      key={`${audience}-${category}`}
+                      initial={{ opacity: 0, y: 8 }}
+                      animate={{ opacity: 1, y: 0 }}
+                      transition={{ duration: 0.2 }}
+                      className="grid grid-cols-2 gap-2 sm:grid-cols-3 sm:gap-3"
+                    >
+                      {presetLooks.map((look) => {
+                        const isSelected = selectedLookId === look.id;
+                        return (
+                          <button
+                            key={look.id}
+                            type="button"
+                            disabled={isSubmitting}
+                            onClick={() => void selectPresetLook(look)}
+                            className={
+                              isSelected
+                                ? "group relative overflow-hidden rounded-2xl border border-[#FF2800]/50 bg-white/5 ring-1 ring-[#FF2800]/20 backdrop-blur-sm"
+                                : "group relative overflow-hidden rounded-2xl border border-white/10 bg-white/5 hover:border-white/20 backdrop-blur-sm"
+                            }
+                          >
+                            <div className="relative aspect-[4/3] w-full overflow-hidden border border-white/10 bg-white/5 backdrop-blur-sm">
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={look.imageSrc}
+                                alt={look.title}
+                                onError={(e) => {
+                                  e.currentTarget.src =
+                                    "data:image/svg+xml;utf8,%3Csvg xmlns='http://www.w3.org/2000/svg' width='640' height='480' viewBox='0 0 640 480'%3E%3Crect width='640' height='480' fill='%23f4f4f5'/%3E%3Ctext x='50%25' y='50%25' dominant-baseline='middle' text-anchor='middle' fill='%2371717a' font-family='Arial,sans-serif' font-size='18'%3EPreview unavailable%3C/text%3E%3C/svg%3E";
+                                }}
+                                className="h-full w-full object-cover"
+                              />
+                            </div>
+                            <div className="px-3 py-2">
+                              <div className="text-left text-sm font-medium leading-4 text-[#F2EFE9]">
+                                {look.title}
+                              </div>
+                            </div>
+                            {isSelected && (
+                              <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#080808]/95 px-2 py-1 text-[10px] font-semibold text-[#F2EFE9]">
+                                <svg
+                                  xmlns="http://www.w3.org/2000/svg"
+                                  viewBox="0 0 20 20"
+                                  fill="currentColor"
+                                  className="h-3 w-3"
+                                >
+                                  <path
+                                    fillRule="evenodd"
+                                    d="M16.704 5.29a1 1 0 010 1.415l-7.5 7.5a1 1 0 01-1.415 0l-3.5-3.5a1 1 0 011.415-1.415l2.793 2.793 6.793-6.793a1 1 0 011.414 0z"
+                                    clipRule="evenodd"
+                                  />
+                                </svg>
+                                Selected
+                              </div>
+                            )}
+                          </button>
+                        );
+                      })}
+                    </motion.div>
+                  )}
+                </section>
+
+                <div className="mt-5 flex gap-3">
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(1)}
+                    className="flex-1 rounded-xl bg-[#1c1c1c] border border-white/[0.08] px-5 py-3 text-sm font-semibold text-[#8A8A8A]"
+                  >
+                    Back
+                  </button>
+                  <button
+                    type="button"
+                    onClick={() => setCurrentStep(3)}
+                    disabled={!garmentFile}
+                    style={primaryActionBgStyle}
+                    className="relative inline-flex min-h-12 flex-1 touch-manipulation items-center justify-center gap-2 overflow-hidden rounded-xl px-5 py-3.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(255,40,0,0.4)] transition-shadow hover:shadow-[0_4px_28px_rgba(255,40,0,0.6)] disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-0 sm:px-6"
+                  >
+                    <span className="absolute inset-0 bg-black/40" aria-hidden />
+                    <span className="relative z-10">Next — Generate →</span>
+                  </button>
+                </div>
               </div>
             )}
-          </div>
-          <p className="text-xs text-[#666]">Vesti · AI-powered virtual try-on</p>
-          </form>
-        </section>
 
-        {/* Status + Result */}
-        <div ref={resultSectionRef} className="w-full">
-          {apiError && (
-            <div className="rounded-2xl border border-red-500/20 bg-[#111] px-3 py-3.5 text-sm text-red-300/80 sm:px-4">
-              <div className="flex items-start gap-3">
-                <span
-                  className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1a1a1a] text-[#888] ring-1 ring-white/10"
-                  aria-hidden
+            {currentStep === 3 && (
+              <div className="w-full rounded-2xl border border-white/10 bg-black/40 p-4 pt-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-5 sm:pt-6">
+                <button
+                  type="button"
+                  onClick={() => setCurrentStep(2)}
+                  className="mb-4 text-xs text-[#6B6B6B] hover:text-[#AAAAAA] hover:underline underline-offset-2"
                 >
-                  <svg
-                    xmlns="http://www.w3.org/2000/svg"
-                    viewBox="0 0 20 20"
-                    fill="currentColor"
-                    className="h-4 w-4"
+                  ← Back
+                </button>
+
+                <section className="w-full">
+                  <form
+                    className="flex w-full flex-col items-center gap-3"
+                    aria-busy={isSubmitting}
+                    onKeyDown={(e) => {
+                      // Prevent accidental Enter-to-submit from non-textarea elements.
+                      if (e.key === "Enter") {
+                        const tag = (e.target as HTMLElement | null)?.tagName?.toLowerCase?.();
+                        if (tag !== "textarea") e.preventDefault();
+                      }
+                    }}
+                    onSubmit={(e) => {
+                      e.preventDefault();
+                      void handleGenerate();
+                    }}
                   >
-                    <path
-                      fillRule="evenodd"
-                      d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
-                      clipRule="evenodd"
-                    />
-                  </svg>
-                </span>
-                <div className="min-w-0">
-                  <div className="text-[11px] font-semibold tracking-[0.12em] text-red-300/80 uppercase">
-                    Could not generate
-                  </div>
-                  <div className="mt-1.5 text-sm leading-relaxed text-red-300/80">
-                    {apiError.error.message}
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
+                    <p className="text-sm text-white/40 uppercase tracking-widest text-center mb-4">
+                      {audience} · {category}
+                    </p>
 
-          {apiSuccess && (
-            <div className="rounded-3xl border border-[#c9a96e]/25 bg-[#111] p-4 text-sm sm:p-5 md:p-6">
-              <div className="text-sm font-semibold leading-snug tracking-tight text-[#f5f0eb]">
-                {apiSuccess.message}
-              </div>
-              <div className="mt-5 sm:mt-6">
-                <div className="mb-2 text-[11px] font-semibold tracking-[0.14em] text-[#c9a96e]/90 uppercase sm:mb-3">
-                  Result
-                </div>
-                <div className="overflow-hidden rounded-xl bg-[#0a0a0a] ring-1 ring-white/10">
-                  <div className="bg-[#0a0a0a] p-2 sm:p-2.5 md:p-3.5">
-                    <button
-                      type="button"
-                      onClick={() => setIsResultPreviewOpen(true)}
-                      className="relative w-full rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#c9a96e]/30"
-                      aria-label="View full size"
-                    >
-                      {/* eslint-disable-next-line @next/next/no-img-element */}
-                      <img
-                        src={apiSuccess.image.value}
-                        alt="Swap result"
-                        className="max-h-[min(65vh,32rem)] w-full rounded-xl bg-[#0a0a0a] object-contain ring-1 ring-white/10 sm:max-h-[70vh]"
-                      />
-                    </button>
-                  </div>
-                  <div className="flex flex-col-reverse gap-2 border-t border-white/[0.06] bg-[#0d0d0d] px-3 py-3 sm:flex-row sm:items-center sm:justify-end sm:gap-2.5 sm:px-4 sm:py-3.5">
-                    <button
-                      type="button"
-                      onClick={() => {
-                        setIsPresetGalleryOpen(true);
-                        // Scroll back to the look picker for user confidence.
-                        lookPickerSectionRef.current?.scrollIntoView({
-                          behavior: "auto",
-                          block: "start",
-                        });
-                      }}
-                      disabled={isSubmitting}
-                      className="min-h-11 w-full shrink-0 rounded-lg bg-transparent border border-white/15 px-3.5 py-2.5 text-xs font-semibold text-[#aaa] hover:border-white/30 disabled:opacity-60 sm:w-auto sm:py-2"
-                    >
-                      Change look
-                    </button>
-                    <button
-                      type="button"
-                      onClick={() => void handleDownloadResult()}
-                      className="min-h-11 w-full shrink-0 rounded-lg bg-[#c9a96e] px-3.5 py-2.5 text-xs font-bold text-[#0a0a0a] hover:brightness-110 sm:w-auto sm:py-2"
-                    >
-                      Download
-                    </button>
-                  </div>
-                </div>
-              </div>
-            </div>
-          )}
-        </div>
-      </div>
-    </div>
-  </div>
-  </div>
+                    {garmentPreview && (
+                      <>
+                        {/* eslint-disable-next-line @next/next/no-img-element */}
+                        <img
+                          src={garmentPreview}
+                          alt="Garment preview"
+                          className="w-48 h-48 object-cover rounded-xl mx-auto mb-6 border border-white/10"
+                        />
+                        <p className="text-sm text-white/30 text-center mb-6">Garment selected</p>
+                      </>
+                    )}
 
+                    <div className="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:min-w-[26rem]">
+                      <div className="flex w-full min-w-0 flex-col gap-2">
+                        <label className="text-base font-semibold text-[#F2EFE9]">Model</label>
+                        <div className="relative w-full min-w-0">
+                          <select
+                            value={selectedModel}
+                            onChange={(e) => setSelectedModel(e.target.value as ModelKey)}
+                            disabled={isSubmitting}
+                            className="min-h-11 w-full min-w-0 appearance-none rounded-xl border border-white/[0.08] bg-[#111] px-4 py-3 pr-10 text-sm font-medium text-[#F2EFE9] outline-none focus:ring-2 focus:ring-[#FF2800]/30 disabled:cursor-not-allowed disabled:opacity-60"
+                          >
+                            {MODEL_OPTIONS.map((m) => (
+                              <option key={m.key} value={m.key}>
+                                {m.label}
+                              </option>
+                            ))}
+                          </select>
+                          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#6B6B6B]">
+                            <svg
+                              xmlns="http://www.w3.org/2000/svg"
+                              viewBox="0 0 20 20"
+                              fill="currentColor"
+                              className="h-5 w-5"
+                            >
+                              <path
+                                fillRule="evenodd"
+                                d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                                clipRule="evenodd"
+                              />
+                            </svg>
+                          </div>
+                        </div>
+                      </div>
+
+                      <button
+                        type="submit"
+                        disabled={!canSubmit}
+                        style={primaryActionBgStyle}
+                        className="relative inline-flex min-h-12 w-full touch-manipulation items-center justify-center gap-2 overflow-hidden rounded-xl px-5 py-3.5 text-sm font-semibold text-white shadow-[0_4px_20px_rgba(255,40,0,0.4)] hover:shadow-[0_4px_28px_rgba(255,40,0,0.6)] transition-shadow disabled:cursor-not-allowed disabled:opacity-40 sm:min-h-0 sm:px-6"
+                      >
+                        <span className="absolute inset-0 bg-black/40" aria-hidden />
+                        <span className="relative z-10 inline-flex items-center justify-center gap-2">
+                          {isSubmitting && (
+                            <span className="h-4 w-4 animate-spin rounded-full border-2 border-white/30 border-t-white" />
+                          )}
+                          {isSubmitting ? "Generating…" : selected.buttonLabel}
+                        </span>
+                      </button>
+                      {!isSubmitting && (!personFile || !garmentFile) && (
+                        <p className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 text-center text-sm leading-relaxed text-[#6B6B6B] backdrop-blur-sm">
+                          {!personFile && !garmentFile
+                            ? "Add both uploads in Step 1 to continue."
+                            : !personFile
+                              ? "Add a person photo in Step 1."
+                              : "Add a garment or choose a preset."}
+                        </p>
+                      )}
+                      {isSubmitting && (
+                        <div className="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 text-center backdrop-blur-sm">
+                          <p className="text-sm font-medium text-[#F2EFE9]">Processing…</p>
+                          <p className="mt-0.5 text-sm leading-relaxed text-[#6B6B6B]">
+                            May take a moment.
+                          </p>
+                        </div>
+                      )}
+                    </div>
+                    <p className="text-sm text-[#6B6B6B]">Vesti · AI-powered virtual try-on</p>
+                  </form>
+                </section>
+
+                <div ref={resultSectionRef} className="w-full">
+                  {apiError && (
+                    <div className="rounded-2xl border border-red-500/20 bg-white/5 px-3 py-3.5 text-sm text-red-300/80 backdrop-blur-sm sm:px-4">
+                      <div className="flex items-start gap-3">
+                        <span
+                          className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1c1c1c] text-[#8A8A8A] ring-1 ring-white/10"
+                          aria-hidden
+                        >
+                          <svg
+                            xmlns="http://www.w3.org/2000/svg"
+                            viewBox="0 0 20 20"
+                            fill="currentColor"
+                            className="h-4 w-4"
+                          >
+                            <path
+                              fillRule="evenodd"
+                              d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-7 4a1 1 0 11-2 0 1 1 0 012 0zm-1-9a1 1 0 00-1 1v4a1 1 0 102 0V6a1 1 0 00-1-1z"
+                              clipRule="evenodd"
+                            />
+                          </svg>
+                        </span>
+                        <div className="min-w-0">
+                          <div className="text-sm font-semibold tracking-[0.12em] text-red-300/80 uppercase">
+                            Could not generate
+                          </div>
+                          <div className="mt-1.5 text-sm leading-relaxed text-red-300/80">
+                            {apiError.error.message}
+                          </div>
+                        </div>
+                      </div>
+                    </div>
+                  )}
+
+                  {apiSuccess && (
+                    <motion.div
+                      initial={{ opacity: 0, scale: 0.97 }}
+                      animate={{ opacity: 1, scale: 1 }}
+                      transition={{ duration: 0.4, ease: "easeOut" }}
+                      className="rounded-3xl border border-[#FF2800]/25 bg-[#111] p-4 text-sm sm:p-5 md:p-6"
+                    >
+                      <div className="text-base font-semibold leading-snug tracking-tight text-[#F2EFE9]">
+                        {apiSuccess.message}
+                      </div>
+                      <div className="mt-5 sm:mt-6">
+                        <div className="mb-2 text-sm font-semibold tracking-[0.14em] text-[#FF2800]/90 uppercase sm:mb-3">
+                          Result
+                        </div>
+                        <div className="overflow-hidden rounded-xl bg-[#080808] ring-1 ring-white/10">
+                          <div className="bg-[#080808] p-2 sm:p-2.5 md:p-3.5">
+                            <button
+                              type="button"
+                              onClick={() => setIsResultPreviewOpen(true)}
+                              className="relative w-full rounded-lg focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800]/30"
+                              aria-label="View full size"
+                            >
+                              {/* eslint-disable-next-line @next/next/no-img-element */}
+                              <img
+                                src={apiSuccess.image.value}
+                                alt="Swap result"
+                                className="max-h-[min(65vh,32rem)] w-full rounded-xl bg-[#080808] object-contain ring-1 ring-white/10 sm:max-h-[70vh]"
+                              />
+                            </button>
+                          </div>
+                          <div className="flex flex-col-reverse gap-2 border-t border-white/[0.06] bg-[#0a0a0a] px-3 py-3 sm:flex-row sm:items-center sm:justify-end sm:gap-2.5 sm:px-4 sm:py-3.5">
+                            <button
+                              type="button"
+                              onClick={() => {
+                                setIsPresetGalleryOpen(true);
+                                setCurrentStep(2);
+                              }}
+                              disabled={isSubmitting}
+                              className="min-h-11 w-full shrink-0 rounded-lg bg-transparent border border-white/15 px-3.5 py-2.5 text-xs font-semibold text-[#AAAAAA] hover:border-white/30 disabled:opacity-60 sm:w-auto sm:py-2"
+                            >
+                              Change look
+                            </button>
+                            <button
+                              type="button"
+                              onClick={() => void handleDownloadResult()}
+                              className="min-h-11 w-full shrink-0 rounded-lg bg-[#FF2800] px-3.5 py-2.5 text-xs font-bold text-white hover:brightness-110 sm:w-auto sm:py-2"
+                            >
+                              Download
+                            </button>
+                          </div>
+                        </div>
+                      </div>
+                    </motion.div>
+                  )}
+                </div>
+              </div>
+            )}
+          </motion.div>
+        </AnimatePresence>
       </main>
+      </div>
 
       {isResultPreviewOpen && apiSuccess?.image && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#0a0a0a]/85 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md sm:p-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#080808]/85 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Full-size result"

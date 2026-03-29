@@ -1,7 +1,10 @@
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest) {
-  const { searchQuery } = await req.json();
+  const { searchQuery, imageBase64: _imageBase64 } = (await req.json()) as {
+    searchQuery: string;
+    imageBase64?: string;
+  };
 
   const params = new URLSearchParams({
     engine: "google_shopping",

@@ -22,8 +22,11 @@ export default function SizeFinderPage() {
   const [productUrl, setProductUrl] = useState<string>("");
   const [result, setResult] = useState<SizeResult | null>(null);
   const [error, setError] = useState<string>("");
+  const [fitPreference, setFitPreference] = useState("Regular");
   const fileInputRef = useRef<HTMLInputElement>(null);
   const cameraInputRef = useRef<HTMLInputElement>(null);
+
+  const fitOptions = ["Slim", "Regular", "Oversize"] as const;
 
   const handlePhotoChosen = useCallback(async (file: File) => {
     const reader = new FileReader();
@@ -65,6 +68,7 @@ export default function SizeFinderPage() {
           productUrl,
           userHeight: height,
           bodyAnalysis,
+          fitPreference,
         }),
       });
       const data = (await res.json()) as SizeResult & { error?: string };
@@ -244,6 +248,32 @@ export default function SizeFinderPage() {
 
               {error && <p className="mt-2 text-xs text-red-400">{error}</p>}
 
+              <div className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-md">
+                <p className="mb-3 text-xs uppercase tracking-widest text-white/50">Fit preference</p>
+                <p className="mb-3 text-xs leading-relaxed text-white/45">
+                  How do you like clothes to fit in this garment? We adjust ease and sizing math accordingly.
+                </p>
+                <div className="grid grid-cols-3 gap-2">
+                  {fitOptions.map((option) => {
+                    const selected = fitPreference === option;
+                    return (
+                      <button
+                        key={option}
+                        type="button"
+                        onClick={() => setFitPreference(option)}
+                        className={`rounded-xl border px-2 py-3 text-center text-xs font-semibold uppercase tracking-wider backdrop-blur-md transition-all sm:text-sm ${
+                          selected
+                            ? "border-[#FF2800] bg-[#FF2800]/15 text-white shadow-[0_0_20px_rgba(255,40,0,0.25)] ring-1 ring-[#FF2800]/40"
+                            : "border-white/15 bg-white/[0.06] text-white/65 hover:border-white/25 hover:text-white/90"
+                        }`}
+                      >
+                        {option}
+                      </button>
+                    );
+                  })}
+                </div>
+              </div>
+
               <button
                 type="button"
                 onClick={analyze}
@@ -322,6 +352,7 @@ export default function SizeFinderPage() {
                   setResult(null);
                   setProductUrl("");
                   setHeight("");
+                  setFitPreference("Regular");
                 }}
                 className="w-full rounded-xl border border-white/10 py-3 text-sm text-white/50 transition-all hover:text-white/80"
               >

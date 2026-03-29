@@ -3,6 +3,9 @@ import { NextRequest, NextResponse } from "next/server";
 export async function POST(req: NextRequest) {
   const { imageBase64, mediaType } = await req.json();
 
+  const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+  const safeMediaType = allowedTypes.includes(mediaType) ? mediaType : "image/jpeg";
+
   const response = await fetch("https://api.anthropic.com/v1/messages", {
     method: "POST",
     headers: {
@@ -19,7 +22,7 @@ export async function POST(req: NextRequest) {
           content: [
             {
               type: "image",
-              source: { type: "base64", media_type: mediaType, data: imageBase64 },
+              source: { type: "base64", media_type: safeMediaType, data: imageBase64 },
             },
             {
               type: "text",

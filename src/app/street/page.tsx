@@ -137,7 +137,10 @@ export default function StreetFinderPage() {
     setError(null);
 
     try {
-      const { mediaType, data: imageBase64 } = await fileToBase64Image(file);
+      const { data: imageBase64 } = await fileToBase64Image(file);
+      const rawType = file.type || "image/jpeg";
+      const allowedTypes = ["image/jpeg", "image/png", "image/gif", "image/webp"];
+      const mediaType = allowedTypes.includes(rawType) ? rawType : "image/jpeg";
 
       const res = await fetch("/api/analyze-outfit", {
         method: "POST",

@@ -101,6 +101,11 @@ export function BodyScanner() {
   const [userHeightCm, setUserHeightCm] = useState(170);
   const [shoulderWidthCm, setShoulderWidthCm] = useState<number | null>(null);
   const [measurementMessage, setMeasurementMessage] = useState<string | null>(null);
+  const [productUrl, setProductUrl] = useState("");
+  const [sizeLoading, setSizeLoading] = useState(false);
+  const [sizeRecommended, setSizeRecommended] = useState<string | null>(null);
+  const [sizeReasoning, setSizeReasoning] = useState<string | null>(null);
+  const [sizeError, setSizeError] = useState<string | null>(null);
 
   const calculateMeasurements = useCallback(
     (landmarks: NormalizedLandmarkList | null) => {
@@ -161,6 +166,46 @@ export function BodyScanner() {
   const onCalculateShoulderWidth = useCallback(() => {
     calculateMeasurements(latestLandmarksRef.current);
   }, [calculateMeasurements]);
+
+  const fetchSizeRecommendation = useCallback(async () => {
+    if (shoulderWidthCm === null) return;
+
+    setSizeLoading(true);
+    setSizeError(null);
+    setSizeRecommended(null);
+    setSizeReasoning(null);
+
+    try {
+      const res = await fetch("/api/size-finder", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          productUrl: productUrl.trim(),
+          userHeight: userHeightCm,
+          bodyAnalysis: "Shoulder width is " + shoulderWidthCm + " cm",
+          fitPreference: "Regular",
+        }),
+      });
+      const data = (await res.json()) as {
+        recommendedSize?: string;
+        reasoning?: string;
+        error?: string;
+        raw?: string;
+      };
+
+      if (!res.ok || data.error) {
+        setSizeError(typeof data.error === "string" ? data.error : "Could not get size recommendation.");
+        return;
+      }
+
+      setSizeRecommended(data.recommendedSize ?? null);
+      setSizeReasoning(data.reasoning ?? null);
+    } catch {
+      setSizeError("Network error. Please try again.");
+    } finally {
+      setSizeLoading(false);
+    }
+  }, [productUrl, shoulderWidthCm, userHeightCm]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -339,6 +384,56 @@ export function BodyScanner() {
             Capture Pose
           </button>
         </div>
+
+        <div className="mt-6 rounded-xl border border-white/10 bg-black/35 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md">
+          <label htmlFor="body-scan-product-url" className="text-xs font-semibold uppercase tracking-widest text-[#FF2800]">
+            Product link
+          </label>
+          <input
+            id="body-scan-product-url"
+            type="url"
+            value={productUrl}
+            onChange={(e) => setProductUrl(e.target.value)}
+            placeholder="https://..."
+            className="mt-2 w-full rounded-lg border border-white/15 bg-black/50 px-4 py-3 text-sm text-white outline-none ring-1 ring-transparent placeholder:text-white/30 focus:border-[#FF2800]/50 focus:ring-[#FF2800]/25"
+          />
+          <button
+            type="button"
+            onClick={() => void fetchSizeRecommendation()}
+            disabled={shoulderWidthCm === null || sizeLoading || !productUrl.trim()}
+            className="mt-4 w-full rounded-xl border border-[#FF2800]/45 bg-[#FF2800]/12 py-3.5 text-sm font-semibold uppercase tracking-widest text-white shadow-[0_0_20px_rgba(255,40,0,0.12)] backdrop-blur-sm transition-colors hover:border-[#FF2800]/70 hover:bg-[#FF2800]/22 disabled:cursor-not-allowed disabled:opacity-40"
+          >
+            Get Size Recommendation
+          </button>
+          <p className="mt-2 text-[11px] text-white/35">
+            Calculate shoulder width first, then paste a store product URL.
+          </p>
+        </div>
+
+        {sizeLoading && (
+          <div className="mt-4 rounded-2xl border border-white/10 bg-black/40 px-5 py-6 text-center backdrop-blur-md">
+            <div className="mx-auto mb-3 h-9 w-9 animate-spin rounded-full border-2 border-[#FF2800] border-t-transparent" />
+            <p className="text-sm font-medium text-white/80">Analyzing fit…</p>
+          </div>
+        )}
+
+        {!sizeLoading && sizeError && (
+          <div className="mt-4 rounded-2xl border border-red-500/30 bg-red-950/20 px-5 py-4 text-sm text-red-200/90 backdrop-blur-md">
+            {sizeError}
+          </div>
+        )}
+
+        {!sizeLoading && !sizeError && (sizeRecommended || sizeReasoning) && (
+          <div className="mt-4 rounded-2xl border border-[#FF2800]/30 bg-black/45 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2800]">Size recommendation</p>
+            {sizeRecommended && (
+              <p className="mt-3 font-mono text-2xl font-bold tabular-nums text-white">{sizeRecommended}</p>
+            )}
+            {sizeReasoning && (
+              <p className="mt-4 text-sm leading-relaxed text-white/75">{sizeReasoning}</p>
+            )}
+          </div>
+        )}
       </div>
     </div>
   );

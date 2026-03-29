@@ -26,6 +26,9 @@ export function AppNav() {
       <Link href="/size" className={linkClass("/size", pathname)}>
         📏 Find My Size
       </Link>
+      <Link href="/body-scan" className={linkClass("/body-scan", pathname)}>
+        📷 Body Scan
+      </Link>
     </nav>
   );
 }

@@ -119,6 +119,30 @@ type ApiError = {
   };
 };
 
+const TRYON_HISTORY_KEY = "vesti_tryon_history_v1";
+const TRYON_HISTORY_MAX = 20;
+
+type TryOnHistoryItem = {
+  id: string;
+  url: string;
+  createdAt: number;
+};
+
+function persistTryOnHistory(items: TryOnHistoryItem[]) {
+  if (typeof window === "undefined") return;
+  const trimmed = items.slice(0, TRYON_HISTORY_MAX);
+  try {
+    localStorage.setItem(TRYON_HISTORY_KEY, JSON.stringify(trimmed));
+  } catch {
+    try {
+      const smaller = trimmed.slice(0, Math.max(1, Math.floor(trimmed.length / 2)));
+      localStorage.setItem(TRYON_HISTORY_KEY, JSON.stringify(smaller));
+    } catch {
+      /* quota or private mode */
+    }
+  }
+}
+
 function createRequestId() {
   if (typeof crypto !== "undefined" && typeof crypto.randomUUID === "function") {
     return crypto.randomUUID();
@@ -200,6 +224,8 @@ export default function Home() {
   const resultSectionRef = useRef<HTMLDivElement | null>(null);
   const [isResultPreviewOpen, setIsResultPreviewOpen] = useState(false);
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
+  const [tryOnHistory, setTryOnHistory] = useState<TryOnHistoryItem[]>([]);
+  const [historyLightboxUrl, setHistoryLightboxUrl] = useState<string | null>(null);
 
   const canSubmit = useMemo(
     () => Boolean(personFile && garmentFile) && !isSubmitting,
@@ -325,6 +351,30 @@ export default function Home() {
   }, [audience, category]);
 
   useEffect(() => {
+    try {
+      const raw = localStorage.getItem(TRYON_HISTORY_KEY);
+      if (!raw) return;
+      const parsed = JSON.parse(raw) as unknown;
+      if (!Array.isArray(parsed)) return;
+      const next: TryOnHistoryItem[] = [];
+      for (const p of parsed) {
+        if (
+          p &&
+          typeof p === "object" &&
+          typeof (p as TryOnHistoryItem).id === "string" &&
+          typeof (p as TryOnHistoryItem).url === "string" &&
+          typeof (p as TryOnHistoryItem).createdAt === "number"
+        ) {
+          next.push(p as TryOnHistoryItem);
+        }
+      }
+      setTryOnHistory(next.slice(0, TRYON_HISTORY_MAX));
+    } catch {
+      /* ignore */
+    }
+  }, []);
+
+  useEffect(() => {
     setIsResultPreviewOpen(false);
     if (!apiSuccess?.image?.value) return;
 
@@ -352,9 +402,12 @@ export default function Home() {
   }, [apiSuccess?.image?.value]);
 
   useEffect(() => {
-    if (!isResultPreviewOpen) return;
+    if (!isResultPreviewOpen && !historyLightboxUrl) return;
     const onKey = (e: KeyboardEvent) => {
-      if (e.key === "Escape") setIsResultPreviewOpen(false);
+      if (e.key === "Escape") {
+        setIsResultPreviewOpen(false);
+        setHistoryLightboxUrl(null);
+      }
     };
     window.addEventListener("keydown", onKey);
     const prevOverflow = document.body.style.overflow;
@@ -363,7 +416,7 @@ export default function Home() {
       window.removeEventListener("keydown", onKey);
       document.body.style.overflow = prevOverflow;
     };
-  }, [isResultPreviewOpen]);
+  }, [isResultPreviewOpen, historyLightboxUrl]);
 
   const selected = useMemo(() => {
     return MODEL_OPTIONS.find((m) => m.key === selectedModel) ?? MODEL_OPTIONS[0];
@@ -428,7 +481,22 @@ export default function Home() {
         return;
       }
 
-      setApiSuccess(data as ApiSuccess);
+      const success = data as ApiSuccess;
+      setApiSuccess(success);
+
+      const imageUrl = success.image?.value;
+      if (imageUrl && typeof imageUrl === "string") {
+        setTryOnHistory((prev) => {
+          const item: TryOnHistoryItem = {
+            id: createRequestId(),
+            url: imageUrl,
+            createdAt: Date.now(),
+          };
+          const next = [item, ...prev.filter((h) => h.url !== imageUrl)].slice(0, TRYON_HISTORY_MAX);
+          persistTryOnHistory(next);
+          return next;
+        });
+      }
     } catch (error) {
       setApiError({
         success: false,
@@ -1029,15 +1097,69 @@ export default function Home() {
           </motion.div>
         </AnimatePresence>
       </main>
+
+      {tryOnHistory.length > 0 && (
+        <section
+          className="mt-10 w-full max-w-4xl px-3 sm:mt-12 sm:px-4"
+          aria-labelledby="tryon-history-heading"
+        >
+          <div className="rounded-2xl border border-white/10 bg-black/35 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-5">
+            <div className="mb-4 flex flex-wrap items-end justify-between gap-3">
+              <div>
+                <h2
+                  id="tryon-history-heading"
+                  className="text-sm font-semibold uppercase tracking-[0.2em] text-[#FF2800]"
+                >
+                  Your try-ons
+                </h2>
+                <p className="mt-1 text-xs text-white/50">Saved on this device only — tap to enlarge.</p>
+              </div>
+              <button
+                type="button"
+                onClick={() => {
+                  setTryOnHistory([]);
+                  persistTryOnHistory([]);
+                }}
+                className="rounded-full border border-white/15 bg-white/[0.06] px-3 py-1.5 text-xs font-semibold uppercase tracking-widest text-white/70 backdrop-blur-sm transition-colors hover:border-[#FF2800]/50 hover:text-white"
+              >
+                Clear history
+              </button>
+            </div>
+            <div className="grid grid-cols-2 gap-3 sm:grid-cols-3 md:grid-cols-4">
+              {tryOnHistory.map((item) => (
+                <button
+                  key={item.id}
+                  type="button"
+                  onClick={() => setHistoryLightboxUrl(item.url)}
+                  className="group relative overflow-hidden rounded-xl border border-white/10 bg-black/40 backdrop-blur-md ring-1 ring-[#FF2800]/15 transition-all hover:border-[#FF2800]/50 hover:ring-[#FF2800]/45"
+                >
+                  {/* eslint-disable-next-line @next/next/no-img-element */}
+                  <img
+                    src={item.url}
+                    alt=""
+                    className="aspect-[3/4] w-full object-cover object-top transition-transform duration-300 group-hover:scale-[1.02]"
+                  />
+                  <span className="pointer-events-none absolute inset-x-0 bottom-0 bg-gradient-to-t from-black/80 to-transparent py-2 text-[10px] font-medium uppercase tracking-wider text-white/80">
+                    Tap to view
+                  </span>
+                </button>
+              ))}
+            </div>
+          </div>
+        </section>
+      )}
       </div>
 
-      {isResultPreviewOpen && apiSuccess?.image && (
+      {(historyLightboxUrl || (isResultPreviewOpen && apiSuccess?.image)) && (
         <div
           className="fixed inset-0 z-[100] flex items-center justify-center bg-[#080808]/85 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Full-size result"
-          onClick={() => setIsResultPreviewOpen(false)}
+          onClick={() => {
+            setHistoryLightboxUrl(null);
+            setIsResultPreviewOpen(false);
+          }}
         >
           <button
             type="button"
@@ -1045,6 +1167,7 @@ export default function Home() {
             aria-label="Close"
             onClick={(e) => {
               e.stopPropagation();
+              setHistoryLightboxUrl(null);
               setIsResultPreviewOpen(false);
             }}
           >
@@ -1066,7 +1189,7 @@ export default function Home() {
           >
             {/* eslint-disable-next-line @next/next/no-img-element */}
             <img
-              src={apiSuccess.image.value}
+              src={historyLightboxUrl ?? apiSuccess?.image?.value ?? ""}
               alt="Swap result, full size"
               className="max-h-[92vh] w-auto max-w-full rounded-xl object-contain shadow-[0_25px_50px_-12px_rgba(0,0,0,0.45)] ring-1 ring-white/10"
             />

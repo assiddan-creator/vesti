@@ -462,7 +462,7 @@ export default function Home() {
           href="/street"
           className="fixed top-4 right-4 z-50 px-4 py-2 rounded-full border border-white/20 backdrop-blur-sm bg-black/40 text-white/70 hover:text-white hover:border-[#FF2800]/50 transition-all text-xs tracking-widest uppercase"
         >
-          Street Finder
+          Spotted something you love? →
         </a>
       <div className="relative w-full h-[220px] sm:h-[260px] overflow-hidden">
         {/* Hero image */}

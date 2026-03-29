@@ -1,6 +1,6 @@
 "use client";
 
-import { useCallback, useEffect, useRef } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
 
 /** CDN builds — must match installed npm versions for locateFile consistency. */
 const MP_POSE_VER = "0.5.1675469404";
@@ -58,6 +58,23 @@ type MpCameraCtor = new (
   options: { onFrame: () => Promise<void> | void; width?: number; height?: number; facingMode?: string },
 ) => MpCamera;
 
+/** MediaPipe pose indices (full-body model). */
+const LM_LEFT_EYE_INNER = 1;
+const LM_LEFT_SHOULDER = 11;
+const LM_RIGHT_SHOULDER = 12;
+const LM_LEFT_HEEL = 29;
+
+function distancePixels2D(
+  a: { x: number; y: number },
+  b: { x: number; y: number },
+  imageWidthPx: number,
+  imageHeightPx: number,
+): number {
+  const dxPx = (b.x - a.x) * imageWidthPx;
+  const dyPx = (b.y - a.y) * imageHeightPx;
+  return Math.sqrt(dxPx * dxPx + dyPx * dyPx);
+}
+
 declare global {
   interface Window {
     Pose?: MpPoseCtor;
@@ -81,6 +98,69 @@ export function BodyScanner() {
   const videoRef = useRef<HTMLVideoElement>(null);
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const latestLandmarksRef = useRef<NormalizedLandmarkList | null>(null);
+  const [userHeightCm, setUserHeightCm] = useState(170);
+  const [shoulderWidthCm, setShoulderWidthCm] = useState<number | null>(null);
+  const [measurementMessage, setMeasurementMessage] = useState<string | null>(null);
+
+  const calculateMeasurements = useCallback(
+    (landmarks: NormalizedLandmarkList | null) => {
+      const video = videoRef.current;
+      if (!landmarks || landmarks.length < 33) {
+        setShoulderWidthCm(null);
+        setMeasurementMessage("Full pose not visible — need landmarks for eyes, shoulders, and feet.");
+        return;
+      }
+
+      if (!video) {
+        setMeasurementMessage("Camera not ready.");
+        return;
+      }
+
+      const w = video.videoWidth;
+      const h = video.videoHeight;
+      if (!w || !h) {
+        setMeasurementMessage("Video dimensions not ready yet.");
+        return;
+      }
+
+      const heightCm = Number(userHeightCm);
+      if (!Number.isFinite(heightCm) || heightCm <= 0) {
+        setShoulderWidthCm(null);
+        setMeasurementMessage("Enter your height in centimeters.");
+        return;
+      }
+
+      const eye = landmarks[LM_LEFT_EYE_INNER];
+      const heel = landmarks[LM_LEFT_HEEL];
+      const leftShoulder = landmarks[LM_LEFT_SHOULDER];
+      const rightShoulder = landmarks[LM_RIGHT_SHOULDER];
+
+      if (!eye || !heel || !leftShoulder || !rightShoulder) {
+        setShoulderWidthCm(null);
+        setMeasurementMessage("Missing key points — stay in frame (full body if possible).");
+        return;
+      }
+
+      const bodyHeightPx = distancePixels2D(eye, heel, w, h);
+      if (bodyHeightPx <= 1e-6) {
+        setShoulderWidthCm(null);
+        setMeasurementMessage("Could not estimate body span in pixels.");
+        return;
+      }
+
+      const pixelsPerCm = bodyHeightPx / heightCm;
+      const shoulderPx = distancePixels2D(leftShoulder, rightShoulder, w, h);
+      const shoulderCm = shoulderPx / pixelsPerCm;
+
+      setShoulderWidthCm(shoulderCm);
+      setMeasurementMessage(null);
+    },
+    [userHeightCm],
+  );
+
+  const onCalculateShoulderWidth = useCallback(() => {
+    calculateMeasurements(latestLandmarksRef.current);
+  }, [calculateMeasurements]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -190,6 +270,25 @@ export function BodyScanner() {
         <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2800]">Body measurement</p>
         <h2 className="mb-4 text-lg font-semibold text-white/90">Live pose</h2>
 
+        <div className="mb-4 rounded-xl border border-white/10 bg-black/35 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md">
+          <label htmlFor="user-height-cm" className="text-xs font-semibold uppercase tracking-widest text-[#FF2800]">
+            Your height (cm)
+          </label>
+          <input
+            id="user-height-cm"
+            type="number"
+            min={100}
+            max={250}
+            step={0.1}
+            value={userHeightCm}
+            onChange={(e) => setUserHeightCm(Number(e.target.value))}
+            className="mt-2 w-full rounded-lg border border-white/15 bg-black/50 px-4 py-3 text-sm text-white outline-none ring-1 ring-transparent transition-[border,box-shadow] placeholder:text-white/30 focus:border-[#FF2800]/50 focus:ring-[#FF2800]/25"
+          />
+          <p className="mt-2 text-[11px] leading-relaxed text-white/40">
+            Used to scale pixel distances. Stand so your full body fits in frame for best accuracy.
+          </p>
+        </div>
+
         <div className="relative aspect-[4/3] w-full overflow-hidden rounded-xl border border-white/10 bg-black/50 ring-1 ring-[#FF2800]/20">
           <video ref={videoRef} className="h-full w-full object-cover" playsInline muted autoPlay />
           <canvas
@@ -204,13 +303,42 @@ export function BodyScanner() {
           Allow camera access. Stand so your full upper body is visible for best tracking.
         </p>
 
-        <button
-          type="button"
-          onClick={capturePose}
-          className="mt-5 w-full rounded-xl border border-[#FF2800]/40 bg-[#FF2800]/10 py-3.5 text-sm font-semibold uppercase tracking-widest text-white shadow-[0_0_24px_rgba(255,40,0,0.15)] backdrop-blur-sm transition-colors hover:border-[#FF2800]/70 hover:bg-[#FF2800]/20"
-        >
-          Capture Pose
-        </button>
+        {(shoulderWidthCm !== null || measurementMessage) && (
+          <div className="mt-5 rounded-2xl border border-[#FF2800]/25 bg-black/40 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_32px_rgba(255,40,0,0.08)] backdrop-blur-md">
+            <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2800]">Shoulder width (estimate)</p>
+            {shoulderWidthCm !== null ? (
+              <p className="mt-2 font-mono text-3xl font-bold tabular-nums text-white">
+                {shoulderWidthCm.toFixed(1)}
+                <span className="ml-1 text-lg font-semibold text-white/60">cm</span>
+              </p>
+            ) : (
+              <p className="mt-2 text-sm text-amber-300/90">{measurementMessage}</p>
+            )}
+            {shoulderWidthCm !== null && (
+              <p className="mt-3 text-xs leading-relaxed text-white/45">
+                Based on eye-to-heel pixel span vs your stated height, then shoulder landmark spacing. For
+                demonstration — not medical grade.
+              </p>
+            )}
+          </div>
+        )}
+
+        <div className="mt-5 flex flex-col gap-3 sm:flex-row">
+          <button
+            type="button"
+            onClick={onCalculateShoulderWidth}
+            className="flex-1 rounded-xl border border-[#FF2800]/50 bg-[#FF2800]/15 py-3.5 text-sm font-semibold uppercase tracking-widest text-white shadow-[0_0_24px_rgba(255,40,0,0.2)] backdrop-blur-sm transition-colors hover:border-[#FF2800] hover:bg-[#FF2800]/25"
+          >
+            Calculate Shoulder Width
+          </button>
+          <button
+            type="button"
+            onClick={capturePose}
+            className="flex-1 rounded-xl border border-[#FF2800]/40 bg-[#FF2800]/10 py-3.5 text-sm font-semibold uppercase tracking-widest text-white shadow-[0_0_24px_rgba(255,40,0,0.15)] backdrop-blur-sm transition-colors hover:border-[#FF2800]/70 hover:bg-[#FF2800]/20"
+          >
+            Capture Pose
+          </button>
+        </div>
       </div>
     </div>
   );

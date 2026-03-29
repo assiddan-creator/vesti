@@ -193,7 +193,6 @@ export default function Home() {
   const [isSubmitting, setIsSubmitting] = useState(false);
   const [apiError, setApiError] = useState<ApiError | null>(null);
   const [apiSuccess, setApiSuccess] = useState<ApiSuccess | null>(null);
-  const [downloadName, setDownloadName] = useState<string | null>(null);
   const inFlightRef = useRef(false);
   const requestIdRef = useRef<string | null>(null);
   const isLoading = isSubmitting;
@@ -254,7 +253,7 @@ export default function Home() {
   async function handleDownloadResult() {
     if (!apiSuccess?.image) return;
     try {
-      const filename = downloadName ?? "vesti-result.png";
+      const filename = "vesti-tryon.jpg";
 
       // For embedded images, download directly.
       if (apiSuccess.image.type === "data_url") {
@@ -403,7 +402,6 @@ export default function Home() {
     setIsSubmitting(true);
     setApiError(null);
     setApiSuccess(null);
-    setDownloadName(null);
 
     try {
       const formData = new FormData();
@@ -431,9 +429,6 @@ export default function Home() {
       }
 
       setApiSuccess(data as ApiSuccess);
-      setDownloadName(
-        `vesti_${selected.key}_${new Date().toISOString().replaceAll(":", "-")}.${selected.downloadExt}`,
-      );
     } catch (error) {
       setApiError({
         success: false,
@@ -970,6 +965,47 @@ export default function Home() {
                               />
                             </button>
                           </div>
+                          <div className="flex flex-col gap-2 px-3 pb-3 pt-1 sm:px-4 sm:pb-4">
+                            <a
+                              href={apiSuccess.image.value}
+                              download="vesti-tryon.jpg"
+                              onClick={(e) => {
+                                e.preventDefault();
+                                void handleDownloadResult();
+                              }}
+                              className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl py-4 text-sm font-semibold text-white"
+                              style={{
+                                backgroundImage: "url('/Luxury_fashion_flat_202603252000.jpeg')",
+                                backgroundSize: "cover",
+                                backgroundPosition: "center",
+                              }}
+                            >
+                              <span className="absolute inset-0 bg-black/40" />
+                              <span className="relative z-10">⬇️ Save Photo</span>
+                            </a>
+                            <button
+                              type="button"
+                              onClick={async () => {
+                                if (typeof navigator !== "undefined" && "share" in navigator && navigator.share) {
+                                  try {
+                                    await navigator.share({
+                                      title: "Check my new look on Vesti!",
+                                      text: "I tried on this outfit virtually — what do you think?",
+                                      url: window.location.href,
+                                    });
+                                  } catch {
+                                    /* user dismissed share sheet */
+                                  }
+                                } else {
+                                  await navigator.clipboard.writeText(window.location.href);
+                                  alert("Link copied!");
+                                }
+                              }}
+                              className="relative flex w-full items-center justify-center gap-2 overflow-hidden rounded-xl border border-white/20 bg-black/40 py-4 text-sm font-semibold text-white backdrop-blur-sm"
+                            >
+                              <span className="relative z-10">📤 Share My Look</span>
+                            </button>
+                          </div>
                           <div className="flex flex-col-reverse gap-2 border-t border-white/[0.06] bg-[#0a0a0a] px-3 py-3 sm:flex-row sm:items-center sm:justify-end sm:gap-2.5 sm:px-4 sm:py-3.5">
                             <button
                               type="button"
@@ -978,16 +1014,9 @@ export default function Home() {
                                 setCurrentStep(2);
                               }}
                               disabled={isSubmitting}
-                              className="min-h-11 w-full shrink-0 rounded-lg bg-transparent border border-white/15 px-3.5 py-2.5 text-xs font-semibold text-[#AAAAAA] hover:border-white/30 disabled:opacity-60 sm:w-auto sm:py-2"
+                              className="min-h-11 w-full shrink-0 rounded-lg border border-white/15 bg-transparent px-3.5 py-2.5 text-xs font-semibold text-[#AAAAAA] hover:border-white/30 disabled:opacity-60 sm:w-auto sm:py-2"
                             >
                               Change look
-                            </button>
-                            <button
-                              type="button"
-                              onClick={() => void handleDownloadResult()}
-                              className="min-h-11 w-full shrink-0 rounded-lg bg-[#FF2800] px-3.5 py-2.5 text-xs font-bold text-white hover:brightness-110 sm:w-auto sm:py-2"
-                            >
-                              Download
                             </button>
                           </div>
                         </div>

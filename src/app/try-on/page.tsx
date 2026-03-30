@@ -226,6 +226,8 @@ export default function TryOnPage() {
   const [currentStep, setCurrentStep] = useState<1 | 2 | 3>(1);
   const [tryOnHistory, setTryOnHistory] = useState<TryOnHistoryItem[]>([]);
   const [historyLightboxUrl, setHistoryLightboxUrl] = useState<string | null>(null);
+  /** Used for analytics / DB event payload (defaults until a fit UI is added). */
+  const [fitPreference, setFitPreference] = useState("Regular");
 
   const canSubmit = useMemo(
     () => Boolean(personFile && garmentFile) && !isSubmitting,
@@ -483,6 +485,33 @@ export default function TryOnPage() {
 
       const success = data as ApiSuccess;
       setApiSuccess(success);
+
+      const productIdForTracking = selectedLookId
+        ? (selectedPresetLook?.id ?? selectedLookId)
+        : "custom_upload";
+      const trackingBody: Record<string, unknown> = {
+        productId: productIdForTracking,
+        userFitPreference: fitPreference,
+        matchConfidence: 0.95,
+      };
+      if (selectedLookId == null && garmentPreview) {
+        trackingBody.originalUserImageUrl = garmentPreview;
+      }
+      void fetch("/api/events/try-on", {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(trackingBody),
+      })
+        .then(async (trackRes) => {
+          if (trackRes.ok) {
+            await trackRes.json();
+            // eslint-disable-next-line no-console -- analytics confirmation
+            console.log("Event tracked successfully");
+          }
+        })
+        .catch(() => {
+          /* fire-and-forget: ignore */
+        });
 
       const imageUrl = success.image?.value;
       if (imageUrl && typeof imageUrl === "string") {

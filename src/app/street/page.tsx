@@ -422,7 +422,7 @@ export default function StreetFinderPage() {
                     🛒 Search on ASOS
                   </a>
                   <Link
-                    href="/"
+                    href="/try-on"
                     className="flex min-h-12 items-center justify-center rounded-xl border border-[#FF2800]/40 bg-[#FF2800]/10 px-4 py-3 text-center text-sm font-semibold text-[#F2EFE9] transition-colors hover:bg-[#FF2800]/20"
                   >
                     👗 Try it on me

@@ -16,8 +16,11 @@ export function AppNav() {
   const pathname = usePathname();
 
   return (
-    <nav className="fixed top-0 left-0 right-0 z-50 flex justify-center gap-2 border-b border-white/10 bg-black/60 px-4 py-3 backdrop-blur-sm">
+    <nav className="fixed top-0 left-0 right-0 z-50 flex flex-wrap justify-center gap-2 border-b border-white/10 bg-black/60 px-4 py-3 backdrop-blur-sm">
       <Link href="/" className={linkClass("/", pathname)}>
+        Home
+      </Link>
+      <Link href="/try-on" className={linkClass("/try-on", pathname)}>
         👗 Try It On
       </Link>
       <Link href="/street" className={linkClass("/street", pathname)}>

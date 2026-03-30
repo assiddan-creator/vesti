@@ -2,7 +2,8 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { motion, useReducedMotion } from "framer-motion";
+import { useCallback, useId, useState } from "react";
+import { AnimatePresence, motion, useReducedMotion } from "framer-motion";
 import { AppNav } from "../components/AppNav";
 
 const primaryActionBgStyle = {
@@ -35,8 +36,54 @@ const features = [
   },
 ] as const;
 
+const testimonials = [
+  {
+    quote:
+      "The virtual try-on sold me on a coat I was about to skip. Seeing it on my own photo felt shockingly real—I ordered with confidence.",
+    name: "Maya K.",
+    role: "Virtual Try-On",
+  },
+  {
+    quote:
+      "Size Finder nailed my ASOS order. I used Slim fit preference and skipped the usual return dance—first time in years.",
+    name: "Jordan T.",
+    role: "Find My Size",
+  },
+  {
+    quote:
+      "I ran both try-on and size check before a big haul. Fewer surprises, less guilt returns. This is how I shop now.",
+    name: "Elena R.",
+    role: "Try-On + Size",
+  },
+] as const;
+
+const faqItems = [
+  {
+    q: "How accurate is the size finder?",
+    a: "We combine your height, fit preference (Slim / Regular / Oversize), and any body notes you provide with the store’s published size chart. It’s guidance—not tailoring—but most users find it close enough to pick confidently on the first order.",
+  },
+  {
+    q: "Is my data secure?",
+    a: "Photos and measurements are used to run the experience you asked for and are not sold to advertisers. Follow best practices: use trusted networks, and avoid sharing sensitive IDs in free-text fields.",
+  },
+  {
+    q: "Which stores do you support?",
+    a: "Paste a product URL from major fashion retailers (AliExpress, Shein, ASOS, Zara-style stores, and many others). If the page exposes a size chart, we can reason about it; obscure or gated pages may limit what we can read.",
+  },
+  {
+    q: "How does virtual try-on work?",
+    a: "You upload a clear photo of yourself and a reference image of the garment. Our models preserve pose and lighting as much as possible and render a new image so you can preview the look before you buy.",
+  },
+] as const;
+
 export default function MarketingHomePage() {
   const reduceMotion = useReducedMotion();
+  const faqBaseId = useId();
+  const [openFaqIndex, setOpenFaqIndex] = useState<number | null>(0);
+
+  const toggleFaq = useCallback((index: number) => {
+    setOpenFaqIndex((prev) => (prev === index ? null : index));
+  }, []);
 
   const heroEase = reduceMotion ? undefined : ([0.22, 1, 0.36, 1] as const);
   const duration = reduceMotion ? 0 : 0.65;
@@ -170,6 +217,149 @@ export default function MarketingHomePage() {
               </motion.div>
             ))}
           </div>
+        </section>
+
+        {/* Testimonials */}
+        <section
+          className="mx-auto mt-20 w-full max-w-6xl sm:mt-24 md:mt-28"
+          aria-labelledby="testimonials-heading"
+        >
+          <motion.h2
+            id="testimonials-heading"
+            className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.3em] text-[#FF2800] sm:mb-12"
+            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: duration * 0.85, ease: heroEase }}
+          >
+            Loved by early adopters
+          </motion.h2>
+
+          <div className="grid gap-5 md:grid-cols-3 md:gap-6">
+            {testimonials.map((t, i) => (
+              <motion.article
+                key={t.name}
+                initial={reduceMotion ? false : { opacity: 0, y: 28 }}
+                whileInView={{ opacity: 1, y: 0 }}
+                viewport={{ once: true, margin: "-32px" }}
+                transition={{
+                  duration: duration * 0.9,
+                  ease: heroEase,
+                  delay: reduceMotion ? 0 : 0.06 + i * 0.09,
+                }}
+                className="flex flex-col rounded-2xl border border-white/10 bg-black/40 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:p-7"
+              >
+                <div className="mb-4 flex items-center gap-1 text-[#FF2800]/90" aria-hidden>
+                  {Array.from({ length: 5 }).map((_, star) => (
+                    <span key={star} className="text-sm">
+                      ★
+                    </span>
+                  ))}
+                </div>
+                <blockquote className="flex-1 text-sm leading-relaxed text-white/75">
+                  <p className="text-pretty">
+                    {"\u201C"}
+                    {t.quote}
+                    {"\u201D"}
+                  </p>
+                </blockquote>
+                <footer className="mt-6 border-t border-white/[0.08] pt-5">
+                  <p className="text-sm font-semibold text-white">{t.name}</p>
+                  <p className="mt-1 text-xs uppercase tracking-widest text-[#FF2800]/85">{t.role}</p>
+                </footer>
+              </motion.article>
+            ))}
+          </div>
+        </section>
+
+        {/* FAQ */}
+        <section
+          className="mx-auto mt-20 w-full max-w-3xl pb-8 sm:mt-24 md:mt-28"
+          aria-labelledby="faq-heading"
+        >
+          <motion.h2
+            id="faq-heading"
+            className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.3em] text-[#FF2800] sm:mb-12"
+            initial={reduceMotion ? false : { opacity: 0, y: 14 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-40px" }}
+            transition={{ duration: duration * 0.85, ease: heroEase }}
+          >
+            Frequently asked questions
+          </motion.h2>
+
+          <motion.div
+            className="rounded-2xl border border-white/10 bg-black/40 p-2 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:p-3"
+            initial={reduceMotion ? false : { opacity: 0, y: 24 }}
+            whileInView={{ opacity: 1, y: 0 }}
+            viewport={{ once: true, margin: "-32px" }}
+            transition={{ duration: duration * 0.95, ease: heroEase, delay: reduceMotion ? 0 : 0.05 }}
+          >
+            <div className="divide-y divide-white/[0.06]">
+              {faqItems.map((item, index) => {
+                const isOpen = openFaqIndex === index;
+                const panelId = `${faqBaseId}-panel-${index}`;
+                const buttonId = `${faqBaseId}-trigger-${index}`;
+                return (
+                  <div key={item.q} className="px-3 py-1 sm:px-4">
+                    <button
+                      id={buttonId}
+                      type="button"
+                      aria-expanded={isOpen}
+                      aria-controls={panelId}
+                      onClick={() => toggleFaq(index)}
+                      className="flex w-full items-center justify-between gap-4 py-4 text-left transition-colors hover:text-white"
+                    >
+                      <span className="text-sm font-semibold leading-snug text-[#F2EFE9] sm:text-base">
+                        {item.q}
+                      </span>
+                      <span
+                        className={`shrink-0 text-[#FF2800] transition-transform duration-200 ${
+                          isOpen ? "rotate-180" : ""
+                        }`}
+                        aria-hidden
+                      >
+                        <svg className="h-5 w-5" viewBox="0 0 20 20" fill="currentColor">
+                          <path
+                            fillRule="evenodd"
+                            d="M5.23 7.21a.75.75 0 011.06.02L10 10.94l3.71-3.71a.75.75 0 111.06 1.06l-4.24 4.24a.75.75 0 01-1.06 0L5.21 8.29a.75.75 0 01.02-1.08z"
+                            clipRule="evenodd"
+                          />
+                        </svg>
+                      </span>
+                    </button>
+                    <AnimatePresence initial={false}>
+                      {isOpen && (
+                        <motion.div
+                          id={panelId}
+                          role="region"
+                          aria-labelledby={buttonId}
+                          initial={reduceMotion ? false : { height: 0, opacity: 0 }}
+                          animate={
+                            reduceMotion
+                              ? { opacity: 1 }
+                              : { height: "auto", opacity: 1 }
+                          }
+                          exit={
+                            reduceMotion
+                              ? { opacity: 0 }
+                              : { height: 0, opacity: 0 }
+                          }
+                          transition={{
+                            duration: reduceMotion ? 0 : 0.28,
+                            ease: [0.22, 1, 0.36, 1],
+                          }}
+                          className="overflow-hidden"
+                        >
+                          <p className="pb-5 pr-2 text-sm leading-relaxed text-white/55">{item.a}</p>
+                        </motion.div>
+                      )}
+                    </AnimatePresence>
+                  </div>
+                );
+              })}
+            </div>
+          </motion.div>
         </section>
       </div>
     </div>

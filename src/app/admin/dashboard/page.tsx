@@ -94,6 +94,77 @@ const sectionTitles: Record<Section, { title: string; subtitle: string }> = {
   settings: { title: "Settings", subtitle: "Store and billing" },
 };
 
+function csvEscapeCell(value: string): string {
+  if (/[",\n\r]/.test(value)) {
+    return `"${value.replace(/"/g, '""')}"`;
+  }
+  return value;
+}
+
+export function exportToCSV(): void {
+  const rows: string[] = [];
+  rows.push([csvEscapeCell("Report"), csvEscapeCell("Vesti inventory report")].join(","));
+  rows.push([csvEscapeCell("Generated"), csvEscapeCell(new Date().toISOString())].join(","));
+  rows.push("");
+
+  rows.push(csvEscapeCell("Summary metrics"));
+  rows.push([csvEscapeCell("Metric"), csvEscapeCell("Value"), csvEscapeCell("Delta"), csvEscapeCell("Hint")].join(","));
+  for (const s of stats) {
+    rows.push(
+      [csvEscapeCell(s.label), csvEscapeCell(s.value), csvEscapeCell(s.delta), csvEscapeCell(s.hint)].join(","),
+    );
+  }
+  rows.push("");
+
+  rows.push(csvEscapeCell("Trend & demand (last 7 days)"));
+  rows.push([csvEscapeCell("Day"), csvEscapeCell("Virtual try-ons"), csvEscapeCell("Add to cart")].join(","));
+  for (const d of trendForecastData) {
+    rows.push([csvEscapeCell(d.day), String(d.tryOns), String(d.addToCart)].join(","));
+  }
+  rows.push("");
+
+  rows.push(csvEscapeCell("Size Finder — fit preference mix"));
+  rows.push([csvEscapeCell("Preference"), csvEscapeCell("Share %")].join(","));
+  for (const f of fitPreferenceMix) {
+    rows.push([csvEscapeCell(f.label), String(f.pct)].join(","));
+  }
+  rows.push("");
+
+  rows.push(csvEscapeCell("Inventory insights"));
+  rows.push([csvEscapeCell("Signal"), csvEscapeCell("Details")].join(","));
+  rows.push(
+    [
+      csvEscapeCell("Most requested size missing from stock"),
+      csvEscapeCell("L — sessions outpaced on-hand units by 38% this week"),
+    ].join(","),
+  );
+  rows.push("");
+
+  rows.push(csvEscapeCell("Top performing items"));
+  rows.push(
+    [csvEscapeCell("Rank"), csvEscapeCell("Product name"), csvEscapeCell("Category"), csvEscapeCell("Total try-ons")].join(
+      ",",
+    ),
+  );
+  topItems.forEach((item, i) => {
+    rows.push(
+      [String(i + 1), csvEscapeCell(item.name), csvEscapeCell(item.category), String(item.tryOns)].join(","),
+    );
+  });
+
+  const csv = rows.join("\r\n");
+  const blob = new Blob([csv], { type: "text/csv;charset=utf-8" });
+  const url = URL.createObjectURL(blob);
+  const a = document.createElement("a");
+  a.href = url;
+  a.download = "vesti_inventory_report.csv";
+  a.style.display = "none";
+  document.body.appendChild(a);
+  a.click();
+  document.body.removeChild(a);
+  URL.revokeObjectURL(url);
+}
+
 export default function MerchantDashboardPage() {
   const [sidebarOpen, setSidebarOpen] = useState(false);
   const [section, setSection] = useState<Section>("overview");
@@ -198,7 +269,14 @@ export default function MerchantDashboardPage() {
               <p className="truncate text-xs text-white/45 sm:text-sm">{sectionTitles[section].subtitle}</p>
             </div>
           </div>
-          <div className="hidden shrink-0 items-center gap-2 sm:flex">
+          <div className="flex shrink-0 flex-wrap items-center justify-end gap-2 sm:gap-3">
+            <button
+              type="button"
+              onClick={() => exportToCSV()}
+              className="rounded-xl border border-[#FF2800]/35 bg-black/45 px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[#F2EFE9] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-[border,box-shadow,background-color] hover:border-[#FF2800]/60 hover:bg-[#FF2800]/10 hover:shadow-[0_0_24px_rgba(255,40,0,0.15)] sm:px-4 sm:py-2.5 sm:text-[11px] sm:tracking-[0.18em]"
+            >
+              Export Data
+            </button>
             <span className="rounded-full border border-white/10 bg-white/[0.06] px-3 py-1.5 text-xs font-medium text-white/70 backdrop-blur-sm">
               Live
             </span>

@@ -172,10 +172,7 @@ export default function StreetFinderPage() {
       const visualRes = await fetch("/api/visual-search", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({
-          searchQuery: parsed.searchQuery,
-          imageBase64,
-        }),
+        body: JSON.stringify({ imageBase64 }),
       });
       const visualData = await visualRes.json();
       // eslint-disable-next-line no-console -- debug: verify visual-search payload from backend

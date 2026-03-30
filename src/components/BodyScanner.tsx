@@ -2,6 +2,8 @@
 
 import { useCallback, useEffect, useRef, useState } from "react";
 
+const fitOptions = ["Slim", "Regular", "Oversize"] as const;
+
 /** CDN builds — must match installed npm versions for locateFile consistency. */
 const MP_POSE_VER = "0.5.1675469404";
 const MP_CAM_VER = "0.3.1675466862";
@@ -102,6 +104,7 @@ export function BodyScanner() {
   const [shoulderWidthCm, setShoulderWidthCm] = useState<number | null>(null);
   const [measurementMessage, setMeasurementMessage] = useState<string | null>(null);
   const [productUrl, setProductUrl] = useState("");
+  const [fitPreference, setFitPreference] = useState("Regular");
   const [sizeLoading, setSizeLoading] = useState(false);
   const [sizeRecommended, setSizeRecommended] = useState<string | null>(null);
   const [sizeReasoning, setSizeReasoning] = useState<string | null>(null);
@@ -183,7 +186,7 @@ export function BodyScanner() {
           productUrl: productUrl.trim(),
           userHeight: userHeightCm,
           bodyAnalysis: "Shoulder width is " + shoulderWidthCm + " cm",
-          fitPreference: "Regular",
+          fitPreference,
         }),
       });
       const data = (await res.json()) as {
@@ -205,7 +208,7 @@ export function BodyScanner() {
     } finally {
       setSizeLoading(false);
     }
-  }, [productUrl, shoulderWidthCm, userHeightCm]);
+  }, [fitPreference, productUrl, shoulderWidthCm, userHeightCm]);
 
   useEffect(() => {
     const video = videoRef.current;
@@ -397,6 +400,31 @@ export function BodyScanner() {
             placeholder="https://..."
             className="mt-2 w-full rounded-lg border border-white/15 bg-black/50 px-4 py-3 text-sm text-white outline-none ring-1 ring-transparent placeholder:text-white/30 focus:border-[#FF2800]/50 focus:ring-[#FF2800]/25"
           />
+          <div className="mt-6 rounded-2xl border border-white/10 bg-black/30 p-4 backdrop-blur-md">
+            <p className="mb-3 text-xs uppercase tracking-widest text-white/50">Fit preference</p>
+            <p className="mb-3 text-xs leading-relaxed text-white/45">
+              How do you like clothes to fit in this garment? We adjust ease and sizing math accordingly.
+            </p>
+            <div className="grid grid-cols-3 gap-2">
+              {fitOptions.map((option) => {
+                const selected = fitPreference === option;
+                return (
+                  <button
+                    key={option}
+                    type="button"
+                    onClick={() => setFitPreference(option)}
+                    className={`rounded-xl border px-2 py-3 text-center text-xs font-semibold uppercase tracking-wider backdrop-blur-md transition-all sm:text-sm ${
+                      selected
+                        ? "border-[#FF2800] bg-[#FF2800]/15 text-white shadow-[0_0_20px_rgba(255,40,0,0.25)] ring-1 ring-[#FF2800]/40"
+                        : "border-white/15 bg-white/[0.06] text-white/65 hover:border-white/25 hover:text-white/90"
+                    }`}
+                  >
+                    {option}
+                  </button>
+                );
+              })}
+            </div>
+          </div>
           <button
             type="button"
             onClick={() => void fetchSizeRecommendation()}

@@ -29,16 +29,16 @@ function UploadCard({
   }
 
   return (
-    <div className="flex flex-1 flex-col gap-3 rounded-2xl border border-white/10 bg-black/40 p-2.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-3">
-      <div className="flex flex-col gap-1">
-        <span className="text-base font-semibold text-white/90">{label}</span>
-        <span className="text-sm leading-relaxed text-white/60">{helperText}</span>
+    <div className="flex flex-1 flex-col items-center gap-3 rounded-2xl border border-white/10 bg-black/40 p-2.5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-3">
+      <div className="flex w-full flex-col items-center gap-1 text-center">
+        <span className="text-base font-semibold text-white">{label}</span>
+        <span className="text-sm leading-relaxed text-[rgba(255,255,255,0.6)]">{helperText}</span>
       </div>
 
       <button
         type="button"
         onClick={() => inputRef.current?.click()}
-        className="upload-zone group relative flex min-h-44 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800]/30 sm:min-h-52"
+        className="upload-zone group relative flex min-h-44 w-full flex-col items-center justify-center gap-3 rounded-xl border border-dashed border-white/20 focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-[#FF2800] sm:min-h-52"
       >
         {preview ? (
           <div className="absolute inset-0 flex items-center justify-center rounded-xl border border-white/10 bg-black/50 p-3">
@@ -47,10 +47,10 @@ function UploadCard({
           </div>
         ) : (
           <>
-            <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10 backdrop-blur-sm group-hover:shadow-sm">
+            <div className="flex h-10 w-10 items-center justify-center rounded-full border border-white bg-white">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-white/60"
+                className="h-5 w-5 text-[#FF2800]"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -63,7 +63,7 @@ function UploadCard({
                 />
               </svg>
             </div>
-            <span className="text-sm font-medium text-white/60 group-hover:text-white/80">
+            <span className="text-sm font-medium text-[rgba(255,255,255,0.6)] group-hover:text-white">
               Add image
             </span>
           </>
@@ -78,7 +78,7 @@ function UploadCard({
         onChange={handleChange}
       />
 
-      <p className="text-sm text-white/60">Preview only. Full file uploads.</p>
+      <p className="text-sm text-[rgba(255,255,255,0.6)]">Preview only. Full file uploads.</p>
 
       {preview && (
         <button
@@ -87,7 +87,7 @@ function UploadCard({
             onClear();
             if (inputRef.current) inputRef.current.value = "";
           }}
-          className="self-start rounded-md border border-white/10 bg-black px-2.5 py-1 text-xs font-semibold text-white/60 hover:border-white/20 hover:text-white/80"
+          className="self-center rounded-md border border-white/10 bg-black px-2.5 py-1 text-xs font-semibold text-white hover:border-[#FF2800] hover:text-white"
         >
           Remove
         </button>
@@ -575,45 +575,27 @@ export default function TryOnPage() {
         </div>
       </div>
       <main className="flex w-full max-w-4xl flex-col items-center gap-8 sm:gap-10 md:gap-12">
-        <div className="relative z-10 mx-auto flex w-full max-w-xl items-center justify-between border-b border-white/10 px-2 py-4 sm:px-4">
+        <div className="relative z-10 mx-auto flex w-full max-w-xl items-center justify-center gap-8 border-b border-white px-2 py-4 sm:gap-12 sm:px-4">
           {[
             { n: 1, label: "Your Photo" },
             { n: 2, label: "Garment" },
             { n: 3, label: "Generate" },
-          ].map(({ n, label }, i) => (
-            <div key={n} className="flex items-center flex-1 last:flex-none">
-              <div className="flex flex-col items-center gap-1.5">
-                <div
-                  className={
-                    currentStep === n
-                      ? "relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-black before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-50 after:absolute after:inset-0 after:bg-[#FF2800]/70 [&>*]:relative [&>*]:z-10"
-                      : currentStep > n
-                        ? "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-[#FF2800]/20 text-[#FF2800]"
-                        : "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-black border border-white/10 text-white/60"
-                  }
-                >
-                  <span className="relative z-10">{currentStep > n ? "✓" : n}</span>
+          ].map(({ n, label }) => {
+            const done = currentStep > n;
+            const active = currentStep === n;
+            const circleClass =
+              done || active
+                ? "flex h-7 w-7 items-center justify-center rounded-full bg-[#FF2800] text-xs font-bold text-white"
+                : "flex h-7 w-7 items-center justify-center rounded-full bg-white text-xs font-bold text-[#FF2800]";
+            return (
+              <div key={n} className="flex flex-col items-center gap-1.5">
+                <div className={circleClass}>
+                  <span>{done ? "✓" : n}</span>
                 </div>
-                <span
-                  className={
-                    currentStep === n
-                      ? "text-[10px] tracking-widest uppercase text-white"
-                      : "text-[10px] tracking-widest uppercase text-white/60"
-                  }
-                >
-                  {label}
-                </span>
+                <span className="text-[10px] font-medium tracking-widest uppercase text-white">{label}</span>
               </div>
-              {i < 2 && (
-                <div
-                  className={
-                    "h-px flex-1 mx-3 mb-5 " +
-                    (currentStep > n ? "bg-[#FF2800]/40" : "bg-white/[0.06]")
-                  }
-                />
-              )}
-            </div>
-          ))}
+            );
+          })}
         </div>
 
         <AnimatePresence mode="wait">
@@ -626,7 +608,7 @@ export default function TryOnPage() {
             className="w-full"
           >
             {currentStep === 1 && (
-              <div className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-5">
+              <div className="mt-4 flex w-full flex-col items-center rounded-2xl border border-white/10 bg-black/40 p-4 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-5">
                 <UploadCard
                   label="Target Person"
                   helperText="Portrait to keep pose and framing"
@@ -635,8 +617,8 @@ export default function TryOnPage() {
                   onClear={() => setPersonFile(null)}
                 />
 
-                <div className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 p-3.5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-4">
-                  <label className="mb-2 block text-base font-semibold text-white/90">
+                <div className="mt-4 w-full rounded-2xl border border-white/10 bg-black/40 p-3.5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-4">
+                  <label className="mb-2 block w-full text-base font-semibold text-white">
                     Refinement (optional)
                   </label>
                   <textarea
@@ -644,7 +626,7 @@ export default function TryOnPage() {
                     onChange={(e) => setRefinePrompt(e.target.value)}
                     placeholder="Keep pose, preserve face, match light"
                     rows={2}
-                    className="w-full resize-none rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-sm text-white outline-none focus:border-white/20 focus:ring-2 focus:ring-[#FF2800]/30"
+                    className="w-full resize-none rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-center text-sm text-white outline-none focus:border-[#FF2800] focus:ring-2 focus:ring-[#FF2800]"
                   />
                 </div>
 
@@ -662,7 +644,7 @@ export default function TryOnPage() {
             )}
 
             {currentStep === 2 && (
-              <div className="w-full rounded-2xl border border-white/10 bg-black/40 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-5">
+              <div className="flex w-full flex-col items-center rounded-2xl border border-white/10 bg-black/40 p-4 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-5">
                 <UploadCard
                   label="Clothing Reference"
                   helperText="Garment, flat lay, or product shot"
@@ -678,12 +660,12 @@ export default function TryOnPage() {
                   }}
                 />
 
-                <section ref={lookPickerSectionRef} className="mt-4 w-full">
-                  <div className="mb-3 flex flex-col gap-1 sm:mb-4">
-                    <div className="flex flex-col gap-2 sm:flex-row sm:items-start sm:justify-between sm:gap-3">
-                      <div className="min-w-0 text-left text-base font-semibold text-white/90 sm:text-left">
+                <section ref={lookPickerSectionRef} className="mt-4 w-full text-center">
+                  <div className="mb-3 flex flex-col items-center gap-1 sm:mb-4">
+                    <div className="flex w-full flex-col items-center gap-2 sm:flex-row sm:items-center sm:justify-center sm:gap-3">
+                      <div className="min-w-0 text-base font-semibold text-white">
                         Choose a look{" "}
-                        <span className="font-medium text-white/60">
+                        <span className="font-medium text-[rgba(255,255,255,0.6)]">
                           · {audience === "women" ? "Women" : "Men"} / {category}
                         </span>
                       </div>
@@ -695,22 +677,22 @@ export default function TryOnPage() {
                             setSelectedLookId(null);
                             setIsPresetGalleryOpen(true);
                           }}
-                          className="text-xs font-semibold text-white/60 underline-offset-2 hover:text-white/80 hover:underline disabled:opacity-60"
+                          className="text-xs font-semibold text-[rgba(255,255,255,0.6)] underline-offset-2 hover:text-white hover:underline disabled:opacity-60"
                         >
                           Clear
                         </button>
                       )}
                     </div>
-                    <div className="text-sm leading-relaxed text-white/60">
+                    <div className="text-sm leading-relaxed text-[rgba(255,255,255,0.6)]">
                       Presets fill the garment slot. Upload your own anytime.
                     </div>
                   </div>
 
-                  <div className="mb-3 sm:mb-4">
-                    <label className="mb-2 block text-base font-semibold tracking-wide text-white/90 uppercase">
+                  <div className="mb-3 flex flex-col items-center sm:mb-4">
+                    <label className="mb-2 block w-full text-base font-semibold uppercase tracking-wide text-white">
                       For
                     </label>
-                    <div className="inline-flex w-full rounded-full border border-white/10 bg-white/5 p-1 backdrop-blur-sm sm:w-auto">
+                    <div className="inline-flex w-full max-w-md justify-center rounded-full border border-white p-1 sm:w-auto">
                       <button
                         type="button"
                         onClick={() => {
@@ -722,8 +704,8 @@ export default function TryOnPage() {
                         disabled={isSubmitting}
                         className={
                           audience === "women"
-                            ? "relative min-h-11 flex-1 overflow-hidden rounded-full px-4 py-2.5 text-sm font-semibold text-white before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-40 after:absolute after:inset-0 after:bg-[#FF2800]/75 sm:flex-none sm:py-2 [&>*]:relative [&>*]:z-10"
-                            : "min-h-11 flex-1 rounded-full bg-white/10 px-4 py-2.5 text-sm font-medium text-white/80 hover:text-white disabled:opacity-60 sm:flex-none sm:py-2"
+                            ? "min-h-11 flex-1 rounded-full bg-[#FF2800] px-4 py-2.5 text-sm font-semibold text-white sm:flex-none sm:py-2"
+                            : "min-h-11 flex-1 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-[#FF2800] hover:brightness-95 disabled:opacity-60 sm:flex-none sm:py-2"
                         }
                       >
                         <span className="relative z-10">Women</span>
@@ -739,8 +721,8 @@ export default function TryOnPage() {
                         disabled={isSubmitting}
                         className={
                           audience === "men"
-                            ? "relative min-h-11 flex-1 overflow-hidden rounded-full px-4 py-2.5 text-sm font-semibold text-white before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-40 after:absolute after:inset-0 after:bg-[#FF2800]/75 sm:flex-none sm:py-2 [&>*]:relative [&>*]:z-10"
-                            : "min-h-11 flex-1 rounded-full bg-white/10 px-4 py-2.5 text-sm font-medium text-white/80 hover:text-white disabled:opacity-60 sm:flex-none sm:py-2"
+                            ? "min-h-11 flex-1 rounded-full bg-[#FF2800] px-4 py-2.5 text-sm font-semibold text-white sm:flex-none sm:py-2"
+                            : "min-h-11 flex-1 rounded-full bg-white px-4 py-2.5 text-sm font-semibold text-[#FF2800] hover:brightness-95 disabled:opacity-60 sm:flex-none sm:py-2"
                         }
                       >
                         <span className="relative z-10">Men</span>
@@ -748,11 +730,11 @@ export default function TryOnPage() {
                     </div>
                   </div>
 
-                  <div className="mb-4 sm:mb-5">
-                    <label className="mb-2 block text-base font-semibold tracking-wide text-white/90 uppercase">
+                  <div className="mb-4 flex flex-col items-center sm:mb-5">
+                    <label className="mb-2 block w-full text-base font-semibold uppercase tracking-wide text-white">
                       Category
                     </label>
-                    <div className="grid grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
+                    <div className="grid w-full max-w-2xl grid-cols-2 gap-1.5 sm:grid-cols-4 sm:gap-2">
                       {categories.map((c) => (
                         <button
                           key={c}
@@ -765,36 +747,36 @@ export default function TryOnPage() {
                           }}
                           className={
                             category === c
-                              ? "relative min-h-11 overflow-hidden rounded-xl px-2.5 py-2 text-xs font-semibold text-white before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-40 after:absolute after:inset-0 after:bg-[#FF2800]/75 sm:px-4 sm:py-2.5 sm:text-sm [&>*]:relative [&>*]:z-10"
-                              : "min-h-11 rounded-xl border border-white/[0.06] bg-white/10 px-2.5 py-2 text-sm font-medium text-white/80 hover:border-white/15 disabled:opacity-60 sm:px-4 sm:py-2.5"
+                              ? "min-h-11 rounded-xl bg-[#FF2800] px-2.5 py-2 text-center text-xs font-semibold text-white sm:px-4 sm:py-2.5 sm:text-sm"
+                              : "min-h-11 rounded-xl border border-white bg-white px-2.5 py-2 text-center text-sm font-semibold text-[#FF2800] hover:brightness-95 disabled:opacity-60 sm:px-4 sm:py-2.5"
                           }
                         >
-                          <span className="relative z-10">{c}</span>
+                          <span>{c}</span>
                         </button>
                       ))}
                     </div>
                   </div>
 
                   {!isPresetGalleryOpen ? (
-                    <div className="flex flex-col gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-white/60 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-4">
-                      <span className="min-w-0 font-semibold text-white sm:truncate">
+                    <div className="flex flex-col items-center gap-2.5 rounded-2xl border border-white bg-black/40 px-3 py-3 text-sm text-[rgba(255,255,255,0.6)] backdrop-blur-sm sm:flex-row sm:justify-center sm:gap-3 sm:px-4">
+                      <span className="min-w-0 text-center font-semibold text-white sm:truncate">
                         {selectedLookId ? (selectedPresetLook?.title ?? "Selected look") : "No preset"}
                       </span>
                       <button
                         type="button"
                         disabled={isSubmitting}
                         onClick={() => setIsPresetGalleryOpen(true)}
-                        className="min-h-10 w-full shrink-0 rounded-lg border border-white/10 bg-black px-3 py-2 text-xs font-semibold text-white/60 hover:border-white/20 disabled:opacity-60 sm:w-auto sm:py-1.5"
+                        className="min-h-10 w-full shrink-0 rounded-lg border border-[#FF2800] bg-[#FF2800] px-3 py-2 text-xs font-semibold text-white hover:brightness-110 disabled:opacity-60 sm:w-auto sm:py-1.5"
                       >
                         Browse
                       </button>
                     </div>
                   ) : presetLooks.length === 0 ? (
-                    <div className="rounded-2xl border border-dashed border-white/10 bg-black/50 px-3 py-4 backdrop-blur-sm sm:px-4">
-                      <p className="text-sm font-semibold tracking-[0.12em] text-white/60 uppercase">
+                    <div className="rounded-2xl border border-dashed border-white bg-black/40 px-3 py-4 text-center backdrop-blur-sm sm:px-4">
+                      <p className="text-sm font-semibold uppercase tracking-[0.12em] text-white">
                         Empty folder
                       </p>
-                      <p className="mt-2 text-sm leading-relaxed text-white/60">
+                      <p className="mt-2 text-sm leading-relaxed text-[rgba(255,255,255,0.6)]">
                         Add files to
                         <span className="font-semibold text-white">
                           {" "}
@@ -838,7 +820,7 @@ export default function TryOnPage() {
                               />
                             </div>
                             <div className="px-3 py-2">
-                              <div className="text-left text-sm font-medium leading-4 text-white">
+                              <div className="text-center text-sm font-medium leading-4 text-white">
                                 {look.title}
                               </div>
                             </div>

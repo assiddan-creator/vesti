@@ -93,7 +93,7 @@ export default function SizeFinderPage() {
       <AppNav />
 
       {/* רקע */}
-      <div className="relative z-10 flex w-full flex-col items-center pt-16 text-[#F2EFE9]">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-4 pt-16 text-white sm:px-6">
         {/* בנר */}
         <div className="relative h-[200px] w-full overflow-hidden">
           <Image src="/hero-banner.jpg" alt="Size Finder" fill className="object-cover object-top opacity-60" />
@@ -105,7 +105,7 @@ export default function SizeFinderPage() {
         </div>
 
         {/* סרגל שלבים */}
-        <div className="relative z-10 mb-6 flex w-full items-center justify-between border-b border-white/10 px-8 py-3">
+        <div className="relative z-10 mx-auto mb-6 flex w-full max-w-2xl items-center justify-between border-b border-white/10 px-4 py-4">
           {["SNAP", "DETAILS", "LINK", "RESULT"].map((label, i) => {
             const steps = ["photo", "details", "link", "result"];
             const isActive = steps[i] === step || (step === "analyzing" && i === 2);
@@ -309,14 +309,7 @@ export default function SizeFinderPage() {
                   {result.store ?? "Recommended Size"}
                 </p>
                 <div className="my-4 text-7xl font-bold text-white">{result.recommendedSize ?? ""}</div>
-                <div
-                  className={`inline-block rounded-full px-3 py-1 text-xs uppercase tracking-widest
-                  ${result.confidence === "high"
-                    ? "bg-green-500/20 text-green-400"
-                    : result.confidence === "medium"
-                      ? "bg-yellow-500/20 text-yellow-400"
-                      : "bg-red-500/20 text-red-400"}`}
-                >
+                <div className="inline-block rounded-full border border-white/15 bg-white/[0.06] px-3 py-1 text-xs uppercase tracking-widest text-[rgba(255,255,255,0.7)]">
                   {result.confidence ?? ""} confidence
                 </div>
               </div>
@@ -329,9 +322,9 @@ export default function SizeFinderPage() {
 
               {/* אזהרה אם יש */}
               {result.warning && (
-                <div className="rounded-2xl border border-yellow-500/30 bg-yellow-500/10 p-4">
-                  <p className="mb-1 text-xs uppercase tracking-widest text-yellow-400">⚠️ Note</p>
-                  <p className="text-sm text-white/70">{result.warning}</p>
+                <div className="rounded-2xl border border-[#FF2800]/25 bg-black/40 p-4">
+                  <p className="mb-1 text-xs uppercase tracking-widest text-[#FF2800]">Note</p>
+                  <p className="text-sm text-[rgba(255,255,255,0.6)]">{result.warning}</p>
                 </div>
               )}
 

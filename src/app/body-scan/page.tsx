@@ -17,10 +17,10 @@ export default function BodyScanPage() {
     <div className="relative min-h-screen">
       <div className="pointer-events-none fixed inset-0 z-0 bg-black/70" />
       <AppNav />
-      <div className="relative z-10 flex min-h-screen flex-col items-center px-4 pb-12 pt-16 text-[#F2EFE9]">
+      <div className="relative z-10 mx-auto flex min-h-screen w-full max-w-6xl flex-col items-center px-4 pb-12 pt-16 text-white sm:px-6">
         <div className="mb-8 text-center">
-          <h1 className="font-serif text-3xl tracking-widest text-white sm:text-4xl">Body Scan</h1>
-          <p className="mt-2 text-sm text-white/50">Pose preview — development build</p>
+          <h1 className="text-3xl font-light tracking-[0.2em] text-white sm:text-4xl">Body Scan</h1>
+          <p className="mt-2 text-sm text-[rgba(255,255,255,0.6)]">Pose preview — development build</p>
         </div>
         <BodyScanner />
       </div>

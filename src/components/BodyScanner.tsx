@@ -313,12 +313,12 @@ export function BodyScanner() {
   }, []);
 
   return (
-    <div className="w-full max-w-2xl">
-      <div className="rounded-2xl border border-white/10 bg-black/40 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:p-6">
+    <div className="mx-auto w-full max-w-2xl">
+      <div className="rounded-2xl border border-white/10 bg-black/40 p-4 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:p-6">
         <p className="mb-1 text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2800]">Body measurement</p>
-        <h2 className="mb-4 text-lg font-semibold text-white/90">Live pose</h2>
+        <h2 className="mb-4 text-lg font-semibold text-white">Live pose</h2>
 
-        <div className="mb-4 rounded-xl border border-white/10 bg-black/35 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md">
+        <div className="mb-4 rounded-xl border border-white/10 bg-black/35 p-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md">
           <label htmlFor="user-height-cm" className="text-xs font-semibold uppercase tracking-widest text-[#FF2800]">
             Your height (cm)
           </label>
@@ -332,7 +332,7 @@ export function BodyScanner() {
             onChange={(e) => setUserHeightCm(Number(e.target.value))}
             className="mt-2 w-full rounded-lg border border-white/15 bg-black/50 px-4 py-3 text-sm text-white outline-none ring-1 ring-transparent transition-[border,box-shadow] placeholder:text-white/30 focus:border-[#FF2800]/50 focus:ring-[#FF2800]/25"
           />
-          <p className="mt-2 text-[11px] leading-relaxed text-white/40">
+          <p className="mt-2 text-[11px] leading-relaxed text-[rgba(255,255,255,0.6)]">
             Used to scale pixel distances. Stand so your full body fits in frame for best accuracy.
           </p>
         </div>
@@ -347,12 +347,12 @@ export function BodyScanner() {
           />
         </div>
 
-        <p className="mt-3 text-xs text-white/45">
+        <p className="mt-3 text-xs text-[rgba(255,255,255,0.6)]">
           Allow camera access. Stand so your full upper body is visible for best tracking.
         </p>
 
         {(shoulderWidthCm !== null || measurementMessage) && (
-          <div className="mt-5 rounded-2xl border border-[#FF2800]/25 bg-black/40 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_32px_rgba(255,40,0,0.08)] backdrop-blur-md">
+          <div className="mt-5 rounded-2xl border border-[#FF2800]/25 bg-black/40 p-5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.06),0_0_32px_rgba(255,40,0,0.08)] backdrop-blur-md sm:text-left">
             <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2800]">Shoulder width (estimate)</p>
             {shoulderWidthCm !== null ? (
               <p className="mt-2 font-mono text-3xl font-bold tabular-nums text-white">
@@ -360,10 +360,10 @@ export function BodyScanner() {
                 <span className="ml-1 text-lg font-semibold text-white/60">cm</span>
               </p>
             ) : (
-              <p className="mt-2 text-sm text-amber-300/90">{measurementMessage}</p>
+              <p className="mt-2 text-sm text-[rgba(255,255,255,0.6)]">{measurementMessage}</p>
             )}
             {shoulderWidthCm !== null && (
-              <p className="mt-3 text-xs leading-relaxed text-white/45">
+              <p className="mt-3 text-xs leading-relaxed text-[rgba(255,255,255,0.6)]">
                 Based on eye-to-heel pixel span vs your stated height, then shoulder landmark spacing. For
                 demonstration — not medical grade.
               </p>
@@ -388,7 +388,7 @@ export function BodyScanner() {
           </button>
         </div>
 
-        <div className="mt-6 rounded-xl border border-white/10 bg-black/35 p-4 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md">
+        <div className="mt-6 rounded-xl border border-white/10 bg-black/35 p-4 text-left shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md">
           <label htmlFor="body-scan-product-url" className="text-xs font-semibold uppercase tracking-widest text-[#FF2800]">
             Product link
           </label>
@@ -433,7 +433,7 @@ export function BodyScanner() {
           >
             Get Size Recommendation
           </button>
-          <p className="mt-2 text-[11px] text-white/35">
+          <p className="mt-2 text-[11px] text-[rgba(255,255,255,0.6)]">
             Calculate shoulder width first, then paste a store product URL.
           </p>
         </div>
@@ -446,7 +446,7 @@ export function BodyScanner() {
         )}
 
         {!sizeLoading && sizeError && (
-          <div className="mt-4 rounded-2xl border border-red-500/30 bg-red-950/20 px-5 py-4 text-sm text-red-200/90 backdrop-blur-md">
+          <div className="mt-4 rounded-2xl border border-[#FF2800]/30 bg-black/40 px-5 py-4 text-sm text-white backdrop-blur-md">
             {sizeError}
           </div>
         )}

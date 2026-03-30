@@ -190,7 +190,7 @@ export default function StreetFinderPage() {
     <div className="relative min-h-screen flex flex-col items-center justify-center pt-0 pb-10 sm:pb-14 md:pb-16 px-3.5 sm:px-4">
       <div className="fixed inset-0 bg-black/70 z-0" />
       <AppNav />
-      <div className="relative z-10 flex w-full flex-col items-center pt-16 text-[#F2EFE9]">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-4 pt-16 text-white sm:px-6">
         <div className="relative w-full h-[180px] sm:h-[220px] overflow-hidden">
           <Image
             src="/hero-banner.jpg"
@@ -201,28 +201,28 @@ export default function StreetFinderPage() {
             sizes="100vw"
             priority
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#080808]/80 via-[#080808]/30 to-[#080808]/80" />
+          <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-black/80" />
           <div className="absolute inset-0 flex flex-col items-center justify-center gap-2 px-4">
-            <h1 className="relative inline-block text-4xl font-extralight tracking-[0.25em] text-[#F2EFE9] sm:text-5xl md:text-6xl">
+            <h1 className="relative inline-block text-4xl font-extralight tracking-[0.25em] text-white sm:text-5xl md:text-6xl">
               Street Finder
-              <span className="absolute -bottom-1.5 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF2800]/70 to-transparent" />
+              <span className="absolute -bottom-1.5 left-0 right-0 h-px bg-[#FF2800]" />
             </h1>
-            <p className="text-center text-sm italic tracking-wide text-white/50 sm:text-base">
+            <p className="text-center text-sm tracking-wide text-[rgba(255,255,255,0.6)] sm:text-base">
               Spot it. Snap it. Shop it.
             </p>
           </div>
         </div>
 
         <main className="flex w-full max-w-4xl flex-col items-center gap-6 sm:gap-8">
-          <div className="relative z-10 flex w-full items-center border-b border-white/10 px-6 py-3 sm:px-8">
+          <div className="relative z-10 mx-auto flex w-full max-w-lg items-center border-b border-white/10 px-4 py-4">
             <div className="flex flex-col items-center gap-1.5">
               <div
                 className={
                   stepActive === 1
-                    ? "relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-[#080808] before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-50 after:absolute after:inset-0 after:bg-[#FF2800]/70 [&>*]:relative [&>*]:z-10"
+                    ? "relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-black before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-50 after:absolute after:inset-0 after:bg-[#FF2800]/70 [&>*]:relative [&>*]:z-10"
                     : step1Complete
                       ? "flex h-7 w-7 items-center justify-center rounded-full bg-[#FF2800]/20 text-xs font-bold text-[#FF2800]"
-                      : "flex h-7 w-7 items-center justify-center rounded-full bg-[#1c1c1c] text-xs font-bold text-[#484848]"
+                      : "flex h-7 w-7 items-center justify-center rounded-full bg-black border border-white/10 text-xs font-bold text-white/60"
                 }
               >
                 <span className="relative z-10">{step1Complete ? "✓" : "1"}</span>
@@ -230,8 +230,8 @@ export default function StreetFinderPage() {
               <span
                 className={
                   stepActive === 1
-                    ? "text-[10px] uppercase tracking-widest text-[#F2EFE9]"
-                    : "text-[10px] uppercase tracking-widest text-[#484848]"
+                    ? "text-[10px] uppercase tracking-widest text-white"
+                    : "text-[10px] uppercase tracking-widest text-white/60"
                 }
               >
                 Snap
@@ -244,10 +244,10 @@ export default function StreetFinderPage() {
               <div
                 className={
                   stepActive === 2
-                    ? "relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-[#080808] before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-50 after:absolute after:inset-0 after:bg-[#FF2800]/70 [&>*]:relative [&>*]:z-10"
+                    ? "relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-black before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-50 after:absolute after:inset-0 after:bg-[#FF2800]/70 [&>*]:relative [&>*]:z-10"
                     : step2Complete
                       ? "flex h-7 w-7 items-center justify-center rounded-full bg-[#FF2800]/20 text-xs font-bold text-[#FF2800]"
-                      : "flex h-7 w-7 items-center justify-center rounded-full bg-[#1c1c1c] text-xs font-bold text-[#484848]"
+                      : "flex h-7 w-7 items-center justify-center rounded-full bg-black border border-white/10 text-xs font-bold text-white/60"
                 }
               >
                 <span className="relative z-10">{step2Complete ? "✓" : "2"}</span>
@@ -255,8 +255,8 @@ export default function StreetFinderPage() {
               <span
                 className={
                   stepActive === 2
-                    ? "text-[10px] uppercase tracking-widest text-[#F2EFE9]"
-                    : "text-[10px] uppercase tracking-widest text-[#484848]"
+                    ? "text-[10px] uppercase tracking-widest text-white"
+                    : "text-[10px] uppercase tracking-widest text-white/60"
                 }
               >
                 Find
@@ -266,7 +266,7 @@ export default function StreetFinderPage() {
 
           <div className="w-full px-1 sm:px-0">
             {error && (
-              <div className="mb-4 rounded-2xl border border-red-500/20 bg-white/5 px-3 py-3.5 text-sm text-red-300/80 backdrop-blur-sm sm:px-4">
+              <div className="mb-4 rounded-2xl border border-[#FF2800]/30 bg-black/40 px-3 py-3.5 text-sm text-white backdrop-blur-sm sm:px-4">
                 {error}
               </div>
             )}
@@ -353,7 +353,7 @@ export default function StreetFinderPage() {
 
             {flow === "results" && result && (
               <div className="w-full rounded-2xl border border-white/10 bg-black/40 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.04)] backdrop-blur-md sm:p-6">
-                <h2 className="mb-6 text-center text-2xl font-bold text-[#F2EFE9]">{result.item}</h2>
+                <h2 className="mb-6 text-center text-2xl font-bold text-white">{result.item}</h2>
 
                 <dl className="mb-8 space-y-3 text-sm">
                   {(
@@ -366,7 +366,7 @@ export default function StreetFinderPage() {
                   ).map(([label, value]) => (
                     <div key={label}>
                       <dt className="text-xs font-semibold uppercase tracking-wide text-[#FF2800]">{label}</dt>
-                      <dd className="mt-0.5 text-[#F2EFE9]">{value}</dd>
+                      <dd className="mt-0.5 text-white">{value}</dd>
                     </div>
                   ))}
                 </dl>
@@ -409,7 +409,7 @@ export default function StreetFinderPage() {
                     href={`https://www.google.com/search?q=${encodeURIComponent(result.searchQuery)}&tbm=shop`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-center text-sm font-semibold text-[#F2EFE9] backdrop-blur-sm transition-colors hover:border-white/25 hover:bg-white/10"
+                    className="flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-center text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:border-white/25 hover:bg-white/10"
                   >
                     🛍️ Find on Google Shopping
                   </a>
@@ -417,13 +417,13 @@ export default function StreetFinderPage() {
                     href={`https://www.asos.com/search/?q=${encodeURIComponent(result.asosQuery)}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-center text-sm font-semibold text-[#F2EFE9] backdrop-blur-sm transition-colors hover:border-white/25 hover:bg-white/10"
+                    className="flex min-h-12 items-center justify-center rounded-xl border border-white/15 bg-white/5 px-4 py-3 text-center text-sm font-semibold text-white backdrop-blur-sm transition-colors hover:border-white/25 hover:bg-white/10"
                   >
                     🛒 Search on ASOS
                   </a>
                   <Link
                     href="/try-on"
-                    className="flex min-h-12 items-center justify-center rounded-xl border border-[#FF2800]/40 bg-[#FF2800]/10 px-4 py-3 text-center text-sm font-semibold text-[#F2EFE9] transition-colors hover:bg-[#FF2800]/20"
+                    className="flex min-h-12 items-center justify-center rounded-xl border border-[#FF2800]/40 bg-[#FF2800]/10 px-4 py-3 text-center text-sm font-semibold text-white transition-colors hover:bg-[#FF2800]/20"
                   >
                     👗 Try it on me
                   </Link>

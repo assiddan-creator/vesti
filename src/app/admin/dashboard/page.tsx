@@ -177,7 +177,7 @@ export default function MerchantDashboardPage() {
   }, []);
 
   return (
-    <div className="relative min-h-screen bg-[#080808] text-[#F2EFE9]">
+    <div className="relative min-h-screen bg-black text-white">
       <div className="pointer-events-none fixed inset-0 z-0">
         <Image
           src="/Luxury_fashion_flat_202603252000.jpeg"
@@ -187,7 +187,7 @@ export default function MerchantDashboardPage() {
           sizes="100vw"
           priority={false}
         />
-        <div className="absolute inset-0 bg-gradient-to-br from-[#080808] via-[#0a0a0a] to-[#080808]" />
+        <div className="absolute inset-0 bg-gradient-to-br from-black via-black to-black" />
       </div>
 
       {sidebarOpen && (
@@ -250,7 +250,7 @@ export default function MerchantDashboardPage() {
       </aside>
 
       <div className="relative z-10 flex min-h-screen flex-1 flex-col lg:pl-[min(18rem,88vw)]">
-        <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/[0.08] bg-[#080808]/80 px-4 py-4 backdrop-blur-md sm:px-6 lg:px-8">
+        <header className="sticky top-0 z-30 flex items-center justify-between gap-4 border-b border-white/[0.08] bg-black/80 px-4 py-4 backdrop-blur-md sm:px-6 lg:px-8">
           <div className="flex min-w-0 items-center gap-3">
             <button
               type="button"
@@ -273,7 +273,7 @@ export default function MerchantDashboardPage() {
             <button
               type="button"
               onClick={() => exportToCSV()}
-              className="rounded-xl border border-[#FF2800]/35 bg-black/45 px-3.5 py-2 text-xs font-semibold uppercase tracking-[0.15em] text-[#F2EFE9] shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-[border,box-shadow,background-color] hover:border-[#FF2800]/60 hover:bg-[#FF2800]/10 hover:shadow-[0_0_24px_rgba(255,40,0,0.15)] sm:px-4 sm:py-2.5 sm:text-[11px] sm:tracking-[0.18em]"
+              className="rounded-xl border border-[#FF2800]/35 bg-black/45 px-3.5 py-2 text-center text-xs font-semibold uppercase tracking-[0.15em] text-white shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-[border,box-shadow,background-color] hover:border-[#FF2800]/60 hover:bg-[#FF2800]/10 hover:shadow-[0_0_24px_rgba(255,40,0,0.15)] sm:px-4 sm:py-2.5 sm:text-[11px] sm:tracking-[0.18em]"
             >
               Export Data
             </button>
@@ -283,15 +283,15 @@ export default function MerchantDashboardPage() {
           </div>
         </header>
 
-        <main className="flex-1 space-y-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
+        <main className="mx-auto w-full max-w-6xl flex-1 space-y-8 px-4 py-8 sm:px-6 lg:px-8 lg:py-10">
           {section === "overview" && (
             <>
               <section aria-label="Key metrics">
-                <div className="grid gap-4 sm:grid-cols-2 xl:grid-cols-3">
+                <div className="grid justify-items-center gap-4 sm:grid-cols-2 sm:justify-items-stretch xl:grid-cols-3">
                   {stats.map((s) => (
                     <div
                       key={s.label}
-                      className="rounded-2xl border border-white/10 bg-black/45 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:p-6"
+                      className="w-full max-w-md rounded-2xl border border-white/10 bg-black/45 p-5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:max-w-none sm:p-6"
                     >
                       <p className="text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2800]/90">{s.label}</p>
                       <p className="mt-3 font-mono text-3xl font-bold tabular-nums tracking-tight text-white sm:text-4xl">
@@ -300,7 +300,7 @@ export default function MerchantDashboardPage() {
                       <div className="mt-4 flex flex-wrap items-center justify-between gap-2 border-t border-white/[0.06] pt-4">
                         <span
                           className={`text-sm font-semibold tabular-nums ${
-                            s.deltaPositive ? "text-emerald-400/95" : "text-red-400/90"
+                            s.deltaPositive ? "text-white" : "text-[rgba(255,255,255,0.7)]"
                           }`}
                         >
                           {s.delta}
@@ -313,15 +313,15 @@ export default function MerchantDashboardPage() {
               </section>
 
               <section aria-label="Trend and inventory insights" className="space-y-4">
-                <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#FF2800]/95">
+                <p className="text-center text-xs font-semibold uppercase tracking-[0.28em] text-[#FF2800]/95">
                   Predictive signals
                 </p>
-                <div className="grid gap-4 lg:grid-cols-2 lg:items-stretch lg:gap-6">
-                  <div className="flex flex-col rounded-2xl border border-white/10 bg-black/45 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:p-6">
-                    <div className="mb-4 flex flex-wrap items-start justify-between gap-3">
-                      <div>
+                <div className="grid justify-items-center gap-4 lg:grid-cols-2 lg:items-stretch lg:justify-items-stretch lg:gap-6">
+                  <div className="flex w-full max-w-xl flex-col rounded-2xl border border-white/10 bg-black/45 p-5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:p-6 lg:max-w-none">
+                    <div className="mb-4 flex flex-col items-center gap-3 sm:flex-row sm:flex-wrap sm:items-start sm:justify-between">
+                      <div className="text-center sm:text-left">
                         <h3 className="text-base font-semibold text-white">Trend &amp; demand forecasting</h3>
-                        <p className="mt-1 text-sm text-white/45">Virtual try-ons vs add to cart · last 7 days</p>
+                        <p className="mt-1 text-sm text-[rgba(255,255,255,0.6)]">Virtual try-ons vs add to cart · last 7 days</p>
                       </div>
                       <div className="flex flex-wrap gap-4 text-[11px] font-medium uppercase tracking-widest text-white/40">
                         <span className="inline-flex items-center gap-2">
@@ -330,8 +330,8 @@ export default function MerchantDashboardPage() {
                         </span>
                         <span className="inline-flex items-center gap-2">
                           <span
-                            className="h-0.5 w-6 rounded-full bg-[#F2EFE9]/45"
-                            style={{ boxShadow: "0 0 12px rgba(242,239,233,0.2)" }}
+                            className="h-0.5 w-6 rounded-full bg-white/45"
+                            style={{ boxShadow: "0 0 12px rgba(255,255,255,0.15)" }}
                             aria-hidden
                           />
                           Add to cart
@@ -351,14 +351,14 @@ export default function MerchantDashboardPage() {
                           <Tooltip
                             cursor={{ stroke: "rgba(255,40,0,0.35)", strokeWidth: 1 }}
                             contentStyle={{
-                              backgroundColor: "rgba(8, 8, 8, 0.92)",
+                              backgroundColor: "rgba(0, 0, 0, 0.92)",
                               border: "1px solid rgba(255,255,255,0.12)",
                               borderRadius: "12px",
                               boxShadow: "0 16px 48px rgba(0,0,0,0.45)",
                               backdropFilter: "blur(12px)",
                             }}
                             labelStyle={{
-                              color: "rgba(242,239,233,0.55)",
+                              color: "rgba(255,255,255,0.6)",
                               fontSize: 10,
                               letterSpacing: "0.2em",
                               textTransform: "uppercase",
@@ -376,25 +376,25 @@ export default function MerchantDashboardPage() {
                             stroke="#FF2800"
                             strokeWidth={2.5}
                             dot={false}
-                            activeDot={{ r: 5, fill: "#FF2800", stroke: "#080808", strokeWidth: 2 }}
+                            activeDot={{ r: 5, fill: "#FF2800", stroke: "#000000", strokeWidth: 2 }}
                           />
                           <Line
                             type="monotone"
                             dataKey="addToCart"
                             name="Add to cart"
-                            stroke="rgba(242, 239, 233, 0.55)"
+                            stroke="rgba(255, 255, 255, 0.55)"
                             strokeWidth={2}
                             dot={false}
-                            activeDot={{ r: 4, fill: "#F2EFE9", stroke: "#080808", strokeWidth: 2 }}
+                            activeDot={{ r: 4, fill: "#FFFFFF", stroke: "#000000", strokeWidth: 2 }}
                           />
                         </LineChart>
                       </ResponsiveContainer>
                     </div>
                   </div>
 
-                  <div className="flex flex-col rounded-2xl border border-white/10 bg-black/40 p-5 shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md sm:p-6">
+                  <div className="flex w-full max-w-xl flex-col rounded-2xl border border-white/10 bg-black/40 p-5 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.05)] backdrop-blur-md sm:p-6 lg:max-w-none">
                     <h3 className="text-base font-semibold text-white">Inventory insights</h3>
-                    <p className="mt-1 text-sm text-white/45">From Size Finder demand signals · update stock before churn</p>
+                    <p className="mt-1 text-sm text-[rgba(255,255,255,0.6)]">From Size Finder demand signals · update stock before churn</p>
 
                     <div className="mt-6 space-y-5">
                       <div>

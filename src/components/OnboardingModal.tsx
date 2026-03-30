@@ -78,7 +78,7 @@ export function OnboardingModal() {
           <motion.div
             role="presentation"
             aria-hidden
-            className="absolute inset-0 bg-[#080808]/80 backdrop-blur-md"
+            className="absolute inset-0 bg-black/80 backdrop-blur-md"
             onClick={dismiss}
           />
 
@@ -90,11 +90,11 @@ export function OnboardingModal() {
             transition={enterTransition}
             onClick={(e) => e.stopPropagation()}
           >
-            <p className="text-xs font-semibold uppercase tracking-[0.28em] text-[#FF2800]">Welcome to Vesti</p>
-            <h2 id="onboarding-title" className="mt-3 text-2xl font-semibold tracking-tight text-[#F2EFE9] sm:text-3xl">
+            <p className="text-center text-xs font-semibold uppercase tracking-[0.28em] text-[#FF2800]">Welcome to Vesti</p>
+            <h2 id="onboarding-title" className="mt-3 text-center text-2xl font-semibold tracking-tight text-white sm:text-3xl">
               Your AI fashion studio
             </h2>
-            <p id="onboarding-desc" className="mt-3 text-sm leading-relaxed text-white/55">
+            <p id="onboarding-desc" className="mt-3 text-center text-sm leading-relaxed text-[rgba(255,255,255,0.6)]">
               Here are three ways we help you shop with confidence—pick any tool from the nav whenever you are ready.
             </p>
 
@@ -102,10 +102,10 @@ export function OnboardingModal() {
               {features.map((f) => (
                 <li
                   key={f.title}
-                  className="rounded-xl border border-white/[0.07] bg-white/[0.04] px-4 py-3 backdrop-blur-sm"
+                  className="rounded-xl border border-white/[0.07] bg-white/[0.04] px-4 py-3 text-center backdrop-blur-sm"
                 >
                   <p className="text-sm font-semibold text-white">{f.title}</p>
-                  <p className="mt-1 text-xs leading-relaxed text-white/50">{f.description}</p>
+                  <p className="mt-1 text-xs leading-relaxed text-[rgba(255,255,255,0.6)]">{f.description}</p>
                 </li>
               ))}
             </ul>
@@ -113,7 +113,7 @@ export function OnboardingModal() {
             <button
               type="button"
               onClick={dismiss}
-              className="mt-8 w-full rounded-xl bg-[#FF2800] px-5 py-3.5 text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[0_8px_32px_rgba(255,40,0,0.35)] transition-[box-shadow,transform] hover:bg-[#e62400] hover:shadow-[0_12px_40px_rgba(255,40,0,0.45)] active:scale-[0.99]"
+              className="mt-8 w-full rounded-xl bg-[#FF2800] px-5 py-3.5 text-center text-sm font-semibold uppercase tracking-[0.18em] text-white shadow-[0_8px_32px_rgba(255,40,0,0.35)] transition-[box-shadow,transform,filter] hover:brightness-110 hover:shadow-[0_12px_40px_rgba(255,40,0,0.45)] active:scale-[0.99]"
             >
               Let&apos;s Get Started
             </button>

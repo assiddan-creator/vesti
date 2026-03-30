@@ -50,7 +50,7 @@ function UploadCard({
             <div className="flex h-10 w-10 items-center justify-center rounded-full bg-white/5 ring-1 ring-white/10 backdrop-blur-sm group-hover:shadow-sm">
               <svg
                 xmlns="http://www.w3.org/2000/svg"
-                className="h-5 w-5 text-[#6B6B6B]"
+                className="h-5 w-5 text-white/60"
                 fill="none"
                 viewBox="0 0 24 24"
                 stroke="currentColor"
@@ -63,7 +63,7 @@ function UploadCard({
                 />
               </svg>
             </div>
-            <span className="text-sm font-medium text-[#555555] group-hover:text-[#AAAAAA]">
+            <span className="text-sm font-medium text-white/60 group-hover:text-white/80">
               Add image
             </span>
           </>
@@ -87,7 +87,7 @@ function UploadCard({
             onClear();
             if (inputRef.current) inputRef.current.value = "";
           }}
-          className="self-start rounded-md border border-white/10 bg-[#1c1c1c] px-2.5 py-1 text-xs font-semibold text-[#8A8A8A] hover:border-white/20 hover:text-[#AAAAAA]"
+          className="self-start rounded-md border border-white/10 bg-black px-2.5 py-1 text-xs font-semibold text-white/60 hover:border-white/20 hover:text-white/80"
         >
           Remove
         </button>
@@ -548,10 +548,10 @@ export default function TryOnPage() {
   };
 
   return (
-    <div className="relative min-h-screen flex flex-col items-center justify-center pt-0 pb-10 sm:pb-14 md:pb-16 px-3.5 sm:px-4">
+    <div className="relative min-h-screen bg-black">
       <div className="fixed inset-0 bg-black/70 z-0" />
       <AppNav />
-      <div className="relative z-10 flex w-full flex-col items-center pt-16 text-[#F2EFE9]">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-4 pb-12 pt-16 text-white sm:px-6 md:pb-16">
       <div className="relative w-full h-[220px] sm:h-[260px] overflow-hidden">
         {/* Hero image */}
         <Image
@@ -564,18 +564,18 @@ export default function TryOnPage() {
           priority
         />
         {/* Dark overlay for readability */}
-        <div className="absolute inset-0 bg-gradient-to-r from-[#080808]/80 via-[#080808]/30 to-[#080808]/80" />
+        <div className="absolute inset-0 bg-gradient-to-r from-black/80 via-black/30 to-black/80" />
         {/* Content overlay */}
         <div className="absolute inset-0 flex flex-col items-center justify-center gap-3">
-          <h1 className="text-[#F2EFE9] font-extralight tracking-[0.3em] text-5xl sm:text-6xl md:text-7xl relative inline-block">
+          <h1 className="text-white font-extralight tracking-[0.3em] text-5xl sm:text-6xl md:text-7xl relative inline-block">
             Vesti
-            <span className="absolute -bottom-2 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF2800]/70 to-transparent" />
+            <span className="absolute -bottom-2 left-0 right-0 h-px bg-[#FF2800]" />
           </h1>
-          <p className="text-white/50 italic text-sm sm:text-base tracking-wider">Try before you buy.</p>
+          <p className="text-[rgba(255,255,255,0.6)] text-sm sm:text-base tracking-wider">Try before you buy.</p>
         </div>
       </div>
       <main className="flex w-full max-w-4xl flex-col items-center gap-8 sm:gap-10 md:gap-12">
-        <div className="relative z-10 w-full flex justify-between items-center px-8 py-3 border-b border-white/10">
+        <div className="relative z-10 mx-auto flex w-full max-w-xl items-center justify-between border-b border-white/10 px-2 py-4 sm:px-4">
           {[
             { n: 1, label: "Your Photo" },
             { n: 2, label: "Garment" },
@@ -586,10 +586,10 @@ export default function TryOnPage() {
                 <div
                   className={
                     currentStep === n
-                      ? "relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-[#080808] before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-50 after:absolute after:inset-0 after:bg-[#FF2800]/70 [&>*]:relative [&>*]:z-10"
+                      ? "relative flex h-7 w-7 items-center justify-center overflow-hidden rounded-full text-xs font-bold text-black before:absolute before:inset-0 before:bg-[url('/bg-texture.jpg')] before:bg-cover before:bg-center before:opacity-50 after:absolute after:inset-0 after:bg-[#FF2800]/70 [&>*]:relative [&>*]:z-10"
                       : currentStep > n
                         ? "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-[#FF2800]/20 text-[#FF2800]"
-                        : "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-[#1c1c1c] text-[#484848]"
+                        : "w-7 h-7 rounded-full flex items-center justify-center text-xs font-bold bg-black border border-white/10 text-white/60"
                   }
                 >
                   <span className="relative z-10">{currentStep > n ? "✓" : n}</span>
@@ -597,8 +597,8 @@ export default function TryOnPage() {
                 <span
                   className={
                     currentStep === n
-                      ? "text-[10px] tracking-widest uppercase text-[#F2EFE9]"
-                      : "text-[10px] tracking-widest uppercase text-[#484848]"
+                      ? "text-[10px] tracking-widest uppercase text-white"
+                      : "text-[10px] tracking-widest uppercase text-white/60"
                   }
                 >
                   {label}
@@ -644,7 +644,7 @@ export default function TryOnPage() {
                     onChange={(e) => setRefinePrompt(e.target.value)}
                     placeholder="Keep pose, preserve face, match light"
                     rows={2}
-                    className="w-full resize-none rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-sm text-[#F2EFE9] outline-none focus:border-white/20 focus:ring-2 focus:ring-[#FF2800]/30"
+                    className="w-full resize-none rounded-xl border border-white/10 bg-black/50 px-3.5 py-2.5 text-sm text-white outline-none focus:border-white/20 focus:ring-2 focus:ring-[#FF2800]/30"
                   />
                 </div>
 
@@ -695,7 +695,7 @@ export default function TryOnPage() {
                             setSelectedLookId(null);
                             setIsPresetGalleryOpen(true);
                           }}
-                          className="text-xs font-semibold text-[#6B6B6B] underline-offset-2 hover:text-[#AAAAAA] hover:underline disabled:opacity-60"
+                          className="text-xs font-semibold text-white/60 underline-offset-2 hover:text-white/80 hover:underline disabled:opacity-60"
                         >
                           Clear
                         </button>
@@ -776,27 +776,27 @@ export default function TryOnPage() {
                   </div>
 
                   {!isPresetGalleryOpen ? (
-                    <div className="flex flex-col gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-[#6B6B6B] backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-4">
-                      <span className="min-w-0 font-semibold text-[#F2EFE9] sm:truncate">
+                    <div className="flex flex-col gap-2.5 rounded-2xl border border-white/10 bg-white/5 px-3 py-3 text-sm text-white/60 backdrop-blur-sm sm:flex-row sm:items-center sm:justify-between sm:gap-3 sm:px-4">
+                      <span className="min-w-0 font-semibold text-white sm:truncate">
                         {selectedLookId ? (selectedPresetLook?.title ?? "Selected look") : "No preset"}
                       </span>
                       <button
                         type="button"
                         disabled={isSubmitting}
                         onClick={() => setIsPresetGalleryOpen(true)}
-                        className="min-h-10 w-full shrink-0 rounded-lg bg-[#1c1c1c] border border-white/[0.08] px-3 py-2 text-xs font-semibold text-[#8A8A8A] hover:border-white/20 disabled:opacity-60 sm:w-auto sm:py-1.5"
+                        className="min-h-10 w-full shrink-0 rounded-lg border border-white/10 bg-black px-3 py-2 text-xs font-semibold text-white/60 hover:border-white/20 disabled:opacity-60 sm:w-auto sm:py-1.5"
                       >
                         Browse
                       </button>
                     </div>
                   ) : presetLooks.length === 0 ? (
                     <div className="rounded-2xl border border-dashed border-white/10 bg-black/50 px-3 py-4 backdrop-blur-sm sm:px-4">
-                      <p className="text-sm font-semibold tracking-[0.12em] text-[#484848] uppercase">
+                      <p className="text-sm font-semibold tracking-[0.12em] text-white/60 uppercase">
                         Empty folder
                       </p>
-                      <p className="mt-2 text-sm leading-relaxed text-[#6B6B6B]">
+                      <p className="mt-2 text-sm leading-relaxed text-white/60">
                         Add files to
-                        <span className="font-semibold text-[#F2EFE9]">
+                        <span className="font-semibold text-white">
                           {" "}
                           public/looks/{audience}/{category.toLowerCase().replaceAll(" ", "")}/
                         </span>
@@ -838,12 +838,12 @@ export default function TryOnPage() {
                               />
                             </div>
                             <div className="px-3 py-2">
-                              <div className="text-left text-sm font-medium leading-4 text-[#F2EFE9]">
+                              <div className="text-left text-sm font-medium leading-4 text-white">
                                 {look.title}
                               </div>
                             </div>
                             {isSelected && (
-                              <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-[#080808]/95 px-2 py-1 text-[10px] font-semibold text-[#F2EFE9]">
+                              <div className="absolute left-2 top-2 inline-flex items-center gap-1 rounded-full bg-black/95 px-2 py-1 text-[10px] font-semibold text-white">
                                 <svg
                                   xmlns="http://www.w3.org/2000/svg"
                                   viewBox="0 0 20 20"
@@ -870,7 +870,7 @@ export default function TryOnPage() {
                   <button
                     type="button"
                     onClick={() => setCurrentStep(1)}
-                    className="flex-1 rounded-xl bg-[#1c1c1c] border border-white/[0.08] px-5 py-3 text-sm font-semibold text-[#8A8A8A]"
+                    className="flex-1 rounded-xl border border-white/10 bg-black px-5 py-3 text-sm font-semibold text-white/60"
                   >
                     Back
                   </button>
@@ -893,7 +893,7 @@ export default function TryOnPage() {
                 <button
                   type="button"
                   onClick={() => setCurrentStep(2)}
-                  className="mb-4 text-xs text-[#6B6B6B] hover:text-[#AAAAAA] hover:underline underline-offset-2"
+                  className="mb-4 text-xs text-white/60 hover:text-white/80 hover:underline underline-offset-2"
                 >
                   ← Back
                 </button>
@@ -932,13 +932,13 @@ export default function TryOnPage() {
 
                     <div className="flex w-full min-w-0 flex-col gap-3 sm:w-auto sm:min-w-[26rem]">
                       <div className="flex w-full min-w-0 flex-col gap-2">
-                        <label className="text-base font-semibold text-[#F2EFE9]">Model</label>
+                        <label className="text-base font-semibold text-white">Model</label>
                         <div className="relative w-full min-w-0">
                           <select
                             value={selectedModel}
                             onChange={(e) => setSelectedModel(e.target.value as ModelKey)}
                             disabled={isSubmitting}
-                            className="min-h-11 w-full min-w-0 appearance-none rounded-xl border border-white/[0.08] bg-[#111] px-4 py-3 pr-10 text-sm font-medium text-[#F2EFE9] outline-none focus:ring-2 focus:ring-[#FF2800]/30 disabled:cursor-not-allowed disabled:opacity-60"
+                            className="min-h-11 w-full min-w-0 appearance-none rounded-xl border border-white/[0.08] bg-black px-4 py-3 pr-10 text-sm font-medium text-white outline-none focus:ring-2 focus:ring-[#FF2800]/30 disabled:cursor-not-allowed disabled:opacity-60"
                           >
                             {MODEL_OPTIONS.map((m) => (
                               <option key={m.key} value={m.key}>
@@ -946,7 +946,7 @@ export default function TryOnPage() {
                               </option>
                             ))}
                           </select>
-                          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-[#6B6B6B]">
+                          <div className="pointer-events-none absolute inset-y-0 right-3 flex items-center text-white/60">
                             <svg
                               xmlns="http://www.w3.org/2000/svg"
                               viewBox="0 0 20 20"
@@ -978,7 +978,7 @@ export default function TryOnPage() {
                         </span>
                       </button>
                       {!isSubmitting && (!personFile || !garmentFile) && (
-                        <p className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 text-center text-sm leading-relaxed text-[#6B6B6B] backdrop-blur-sm">
+                        <p className="rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 text-center text-sm leading-relaxed text-white/60 backdrop-blur-sm">
                           {!personFile && !garmentFile
                             ? "Add both uploads in Step 1 to continue."
                             : !personFile
@@ -988,23 +988,23 @@ export default function TryOnPage() {
                       )}
                       {isSubmitting && (
                         <div className="w-full rounded-2xl border border-white/10 bg-white/5 px-3 py-2.5 text-center backdrop-blur-sm">
-                          <p className="text-sm font-medium text-[#F2EFE9]">Processing…</p>
-                          <p className="mt-0.5 text-sm leading-relaxed text-[#6B6B6B]">
+                          <p className="text-sm font-medium text-white">Processing…</p>
+                          <p className="mt-0.5 text-sm leading-relaxed text-white/60">
                             May take a moment.
                           </p>
                         </div>
                       )}
                     </div>
-                    <p className="text-sm text-[#6B6B6B]">Vesti · AI-powered virtual try-on</p>
+                    <p className="text-sm text-white/60">Vesti · AI-powered virtual try-on</p>
                   </form>
                 </section>
 
                 <div ref={resultSectionRef} className="w-full">
                   {apiError && (
-                    <div className="rounded-2xl border border-red-500/20 bg-white/5 px-3 py-3.5 text-sm text-red-300/80 backdrop-blur-sm sm:px-4">
+                    <div className="rounded-2xl border border-[#FF2800]/30 bg-black/40 px-3 py-3.5 text-sm text-white backdrop-blur-sm sm:px-4">
                       <div className="flex items-start gap-3">
                         <span
-                          className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-[#1c1c1c] text-[#8A8A8A] ring-1 ring-white/10"
+                          className="mt-0.5 inline-flex h-8 w-8 shrink-0 items-center justify-center rounded-full border border-white/10 bg-black text-white/60 ring-1 ring-white/10"
                           aria-hidden
                         >
                           <svg
@@ -1021,10 +1021,10 @@ export default function TryOnPage() {
                           </svg>
                         </span>
                         <div className="min-w-0">
-                          <div className="text-sm font-semibold tracking-[0.12em] text-red-300/80 uppercase">
+                          <div className="text-sm font-semibold tracking-[0.12em] text-[#FF2800] uppercase">
                             Could not generate
                           </div>
-                          <div className="mt-1.5 text-sm leading-relaxed text-red-300/80">
+                          <div className="mt-1.5 text-sm leading-relaxed text-[rgba(255,255,255,0.6)]">
                             {apiError.error.message}
                           </div>
                         </div>
@@ -1037,17 +1037,17 @@ export default function TryOnPage() {
                       initial={{ opacity: 0, scale: 0.97 }}
                       animate={{ opacity: 1, scale: 1 }}
                       transition={{ duration: 0.4, ease: "easeOut" }}
-                      className="rounded-3xl border border-[#FF2800]/25 bg-[#111] p-4 text-sm sm:p-5 md:p-6"
+                      className="rounded-3xl border border-[#FF2800]/25 bg-black p-4 text-sm sm:p-5 md:p-6"
                     >
-                      <div className="text-base font-semibold leading-snug tracking-tight text-[#F2EFE9]">
+                      <div className="text-base font-semibold leading-snug tracking-tight text-white">
                         {apiSuccess.message}
                       </div>
                       <div className="mt-5 sm:mt-6">
                         <div className="mb-2 text-sm font-semibold tracking-[0.14em] text-[#FF2800]/90 uppercase sm:mb-3">
                           Result
                         </div>
-                        <div className="overflow-hidden rounded-xl bg-[#080808] ring-1 ring-white/10">
-                          <div className="bg-[#080808] p-2 sm:p-2.5 md:p-3.5">
+                        <div className="overflow-hidden rounded-xl bg-black ring-1 ring-white/10">
+                          <div className="bg-black p-2 sm:p-2.5 md:p-3.5">
                             <button
                               type="button"
                               onClick={() => setIsResultPreviewOpen(true)}
@@ -1058,7 +1058,7 @@ export default function TryOnPage() {
                               <img
                                 src={apiSuccess.image.value}
                                 alt="Swap result"
-                                className="max-h-[min(65vh,32rem)] w-full rounded-xl bg-[#080808] object-contain ring-1 ring-white/10 sm:max-h-[70vh]"
+                                className="max-h-[min(65vh,32rem)] w-full rounded-xl bg-black object-contain ring-1 ring-white/10 sm:max-h-[70vh]"
                               />
                             </button>
                           </div>
@@ -1181,7 +1181,7 @@ export default function TryOnPage() {
 
       {(historyLightboxUrl || (isResultPreviewOpen && apiSuccess?.image)) && (
         <div
-          className="fixed inset-0 z-[100] flex items-center justify-center bg-[#080808]/85 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md sm:p-4"
+          className="fixed inset-0 z-[100] flex items-center justify-center bg-black/85 p-3 pt-[max(0.75rem,env(safe-area-inset-top))] backdrop-blur-md sm:p-4"
           role="dialog"
           aria-modal="true"
           aria-label="Full-size result"

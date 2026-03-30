@@ -150,11 +150,11 @@ html {
   background-position: center;
   background-attachment: fixed;
   background-repeat: no-repeat;
-  background-color: #080808;
+  background-color: #000000;
 }
 
 body {
-  background-color: #080808;
+  background-color: #000000;
   background-image: url("/Luxury_fashion_flat_202603252000.jpeg");
   background-size: cover;
   background-position: center;
@@ -177,5 +177,5 @@ body {
 textarea,
 input[type="text"] {
   background: rgba(0, 0, 0, 0.5) !important;
-  color: rgba(242, 239, 233, 0.9) !important;
+  color: #ffffff !important;
 }

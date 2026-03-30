@@ -90,7 +90,7 @@ export default function MarketingHomePage() {
   const stagger = reduceMotion ? 0 : 0.1;
 
   return (
-    <div className="relative min-h-screen overflow-x-hidden pb-16 pt-0">
+    <div className="relative min-h-screen overflow-x-hidden bg-black pb-20 pt-0">
       {/* Flatlay atmosphere + depth */}
       <div className="pointer-events-none fixed inset-0 z-0">
         <Image
@@ -101,15 +101,15 @@ export default function MarketingHomePage() {
           sizes="100vw"
           priority
         />
-        <div className="absolute inset-0 bg-gradient-to-b from-[#080808]/92 via-[#080808]/88 to-[#080808]/95" />
-        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,40,0,0.14),transparent_55%)]" />
+        <div className="absolute inset-0 bg-gradient-to-b from-black/92 via-black/88 to-black/95" />
+        <div className="absolute inset-0 bg-[radial-gradient(ellipse_80%_60%_at_50%_-10%,rgba(255,40,0,0.12),transparent_55%)]" />
       </div>
 
       <AppNav />
 
-      <div className="relative z-10 flex w-full flex-col items-center px-4 pt-24 text-[#F2EFE9] sm:px-6 md:pt-28">
+      <div className="relative z-10 mx-auto flex w-full max-w-6xl flex-col items-center px-4 pt-24 text-white sm:px-6 md:pt-28">
         {/* Hero */}
-        <section className="mx-auto flex w-full max-w-5xl flex-col items-center text-center">
+        <section className="flex w-full flex-col items-center text-center">
           <motion.p
             className="mb-4 text-xs font-semibold uppercase tracking-[0.35em] text-[#FF2800]/95 sm:text-sm"
             initial={reduceMotion ? false : { opacity: 0, y: 16 }}
@@ -120,21 +120,21 @@ export default function MarketingHomePage() {
           </motion.p>
 
           <motion.h1
-            className="max-w-4xl text-balance text-4xl font-extralight leading-[1.08] tracking-[0.06em] text-[#F2EFE9] sm:text-5xl md:text-6xl lg:text-7xl"
+            className="max-w-4xl text-balance text-4xl font-light leading-[1.08] tracking-[0.06em] text-white sm:text-5xl md:text-6xl lg:text-7xl"
             initial={reduceMotion ? false : { opacity: 0, y: 28 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration, ease: heroEase, delay: stagger }}
           >
             See every outfit on{" "}
-            <span className="relative inline-block font-light text-white">
+            <span className="relative inline-block font-semibold text-white">
               you
-              <span className="absolute -bottom-1 left-0 right-0 h-px bg-gradient-to-r from-transparent via-[#FF2800]/80 to-transparent" />
+              <span className="absolute -bottom-1 left-0 right-0 h-0.5 bg-[#FF2800]" />
             </span>
             —before you buy.
           </motion.h1>
 
           <motion.p
-            className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-white/55 sm:text-lg"
+            className="mx-auto mt-6 max-w-2xl text-pretty text-base leading-relaxed text-[rgba(255,255,255,0.6)] sm:text-lg"
             initial={reduceMotion ? false : { opacity: 0, y: 20 }}
             animate={{ opacity: 1, y: 0 }}
             transition={{ duration: duration * 0.95, ease: heroEase, delay: stagger * 2 }}
@@ -159,7 +159,7 @@ export default function MarketingHomePage() {
             </Link>
             <Link
               href="/size"
-              className="rounded-2xl border border-white/20 bg-white/[0.06] px-8 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-white/85 backdrop-blur-md transition-colors hover:border-[#FF2800]/45 hover:bg-white/[0.09] hover:text-white"
+              className="rounded-2xl border border-white/15 bg-white/[0.05] px-8 py-4 text-sm font-semibold uppercase tracking-[0.18em] text-[rgba(255,255,255,0.7)] backdrop-blur-md transition-colors hover:border-[#FF2800]/50 hover:text-white"
             >
               Find my size
             </Link>
@@ -168,7 +168,7 @@ export default function MarketingHomePage() {
 
         {/* Features */}
         <section
-          className="mx-auto mt-20 w-full max-w-6xl sm:mt-24 md:mt-28"
+          className="mt-20 w-full sm:mt-24 md:mt-28"
           aria-labelledby="features-heading"
         >
           <motion.h2
@@ -182,10 +182,11 @@ export default function MarketingHomePage() {
             Three tools. One wardrobe.
           </motion.h2>
 
-          <div className="grid gap-5 sm:grid-cols-2 lg:grid-cols-3 lg:gap-6">
+          <div className="grid justify-items-center gap-5 sm:grid-cols-2 sm:justify-items-stretch lg:grid-cols-3 lg:gap-6">
             {features.map((f, i) => (
               <motion.div
                 key={f.href}
+                className="w-full max-w-md sm:max-w-none"
                 initial={reduceMotion ? false : { opacity: 0, y: 32 }}
                 whileInView={{ opacity: 1, y: 0 }}
                 viewport={{ once: true, margin: "-24px" }}
@@ -197,7 +198,7 @@ export default function MarketingHomePage() {
               >
                 <Link
                   href={f.href}
-                  className="group flex h-full flex-col rounded-2xl border border-white/10 bg-black/40 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-[border,box-shadow] hover:border-[#FF2800]/35 hover:shadow-[0_0_40px_rgba(255,40,0,0.12)] sm:p-7"
+                  className="group flex h-full flex-col items-center rounded-2xl border border-white/10 bg-black/40 p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md transition-[border,box-shadow] hover:border-[#FF2800]/35 hover:shadow-[0_0_40px_rgba(255,40,0,0.12)] sm:p-7"
                 >
                   <span
                     className="mb-4 inline-flex h-12 w-12 items-center justify-center rounded-xl border border-white/10 bg-white/[0.05] text-2xl backdrop-blur-sm transition-colors group-hover:border-[#FF2800]/30"
@@ -206,7 +207,7 @@ export default function MarketingHomePage() {
                     {f.icon}
                   </span>
                   <h3 className="text-lg font-semibold tracking-wide text-white sm:text-xl">{f.title}</h3>
-                  <p className="mt-3 flex-1 text-sm leading-relaxed text-white/55">{f.description}</p>
+                  <p className="mt-3 flex-1 text-sm leading-relaxed text-[rgba(255,255,255,0.6)]">{f.description}</p>
                   <span className="mt-6 inline-flex items-center gap-2 text-xs font-semibold uppercase tracking-[0.2em] text-[#FF2800]">
                     Open tool
                     <span className="transition-transform group-hover:translate-x-1" aria-hidden>
@@ -220,10 +221,7 @@ export default function MarketingHomePage() {
         </section>
 
         {/* Testimonials */}
-        <section
-          className="mx-auto mt-20 w-full max-w-6xl sm:mt-24 md:mt-28"
-          aria-labelledby="testimonials-heading"
-        >
+        <section className="mt-20 w-full sm:mt-24 md:mt-28" aria-labelledby="testimonials-heading">
           <motion.h2
             id="testimonials-heading"
             className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.3em] text-[#FF2800] sm:mb-12"
@@ -235,7 +233,7 @@ export default function MarketingHomePage() {
             Loved by early adopters
           </motion.h2>
 
-          <div className="grid gap-5 md:grid-cols-3 md:gap-6">
+          <div className="grid justify-items-center gap-5 md:grid-cols-3 md:gap-6">
             {testimonials.map((t, i) => (
               <motion.article
                 key={t.name}
@@ -247,7 +245,7 @@ export default function MarketingHomePage() {
                   ease: heroEase,
                   delay: reduceMotion ? 0 : 0.06 + i * 0.09,
                 }}
-                className="flex flex-col rounded-2xl border border-white/10 bg-black/40 p-6 shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:p-7"
+                className="flex w-full max-w-md flex-col items-center rounded-2xl border border-white/10 bg-black/40 p-6 text-center shadow-[inset_0_1px_0_rgba(255,255,255,0.06)] backdrop-blur-md sm:max-w-none sm:p-7"
               >
                 <div className="mb-4 flex items-center gap-1 text-[#FF2800]/90" aria-hidden>
                   {Array.from({ length: 5 }).map((_, star) => (
@@ -256,7 +254,7 @@ export default function MarketingHomePage() {
                     </span>
                   ))}
                 </div>
-                <blockquote className="flex-1 text-sm leading-relaxed text-white/75">
+                <blockquote className="flex-1 text-sm leading-relaxed text-[rgba(255,255,255,0.6)]">
                   <p className="text-pretty">
                     {"\u201C"}
                     {t.quote}
@@ -273,10 +271,7 @@ export default function MarketingHomePage() {
         </section>
 
         {/* FAQ */}
-        <section
-          className="mx-auto mt-20 w-full max-w-3xl pb-8 sm:mt-24 md:mt-28"
-          aria-labelledby="faq-heading"
-        >
+        <section className="mt-20 w-full max-w-3xl pb-8 sm:mt-24 md:mt-28" aria-labelledby="faq-heading">
           <motion.h2
             id="faq-heading"
             className="mb-10 text-center text-xs font-semibold uppercase tracking-[0.3em] text-[#FF2800] sm:mb-12"
@@ -308,9 +303,9 @@ export default function MarketingHomePage() {
                       aria-expanded={isOpen}
                       aria-controls={panelId}
                       onClick={() => toggleFaq(index)}
-                      className="flex w-full items-center justify-between gap-4 py-4 text-left transition-colors hover:text-white"
+                      className="flex w-full items-center justify-between gap-4 py-4 text-center transition-colors hover:text-white sm:text-left"
                     >
-                      <span className="text-sm font-semibold leading-snug text-[#F2EFE9] sm:text-base">
+                      <span className="flex-1 text-sm font-semibold leading-snug text-white sm:text-base">
                         {item.q}
                       </span>
                       <span
@@ -351,7 +346,9 @@ export default function MarketingHomePage() {
                           }}
                           className="overflow-hidden"
                         >
-                          <p className="pb-5 pr-2 text-sm leading-relaxed text-white/55">{item.a}</p>
+                          <p className="pb-5 pr-2 text-center text-sm leading-relaxed text-[rgba(255,255,255,0.6)] sm:text-left">
+                            {item.a}
+                          </p>
                         </motion.div>
                       )}
                     </AnimatePresence>
